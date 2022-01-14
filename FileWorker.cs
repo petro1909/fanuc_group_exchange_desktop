@@ -67,7 +67,7 @@ namespace fanuc_group_exchange_desktop
             }
         }
         
-        //name
+        //Fanuc program name
         public string GetFileName(string filePath)
         {
             FileInfo file = new FileInfo(filePath);
