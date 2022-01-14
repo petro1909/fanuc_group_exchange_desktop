@@ -1,0 +1,10 @@
+﻿<Application x:Class="fanuc_group_exchange_desktop.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
+             StartupUri="View/MainWindow.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

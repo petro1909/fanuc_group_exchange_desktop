@@ -1,0 +1,68 @@
+﻿<Window x:Class="fanuc_group_exchange_desktop.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
+        mc:Ignorable="d"
+        Title="Group Exchanger" HorizontalAlignment="Center" Height="600" MinHeight="500" Width="970" MinWidth="970">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="18"></Setter>
+            <Setter Property="FontWeight" Value="Medium"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*" MinWidth="500"></ColumnDefinition>
+            <ColumnDefinition Width="45*" MinWidth="450"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="95*"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+            
+            <ScrollViewer>
+                <TextBlock FontFamily="Consolas" FontSize="12" FontWeight="Normal"  Grid.Row="0" x:Name="FileCode" ScrollViewer.VerticalScrollBarVisibility="Visible" />
+            </ScrollViewer>
+
+            <Grid Grid.Row="1" VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button  Grid.Column="0" x:Name="OpenFile" Height="50" MinWidth="130" Click="GetFileCode">Open File</Button>
+                <Button  Grid.Column="1" x:Name="Save" Height="50" MinWidth="130" Click="SaveFile">Save</Button>
+                <Button  Grid.Column="2" x:Name="SaveAs" Height="50" MinWidth="130" Click="SaveFileAs">Save As</Button>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="GroupInforamtion" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="70*"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" MinHeight="100">
+                <TextBlock x:Name="UsedGroups"></TextBlock>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" >
+                <StackPanel>
+                    <ListBox x:Name="Groups" BorderThickness="0"></ListBox>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <Button Grid.Row="2"   x:Name="AddGroup" Click="AddGroupPanel">Add Group Block</Button>
+            <Button Grid.Row="3" x:Name="SaveGroups" Click="SaveGroup_Click">Save Groups</Button>
+        </Grid>
+    </Grid>
+</Window>

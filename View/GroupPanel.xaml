@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="fanuc_group_exchange_desktop.View.GroupPanel"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
+      mc:Ignorable="d"
+      BorderThickness="2"
+      BorderBrush="Black"
+      GotFocus="UserControl_GotFocus"
+      >
+
+    <UserControl.Resources>
+        <Style x:Key="ControlStyle">
+            <Setter Property="ItemsControl.FontFamily" Value="Verdana"></Setter>
+            <Setter Property="ItemsControl.FontSize" Value="18"></Setter>
+            <Setter Property="ItemsControl.Margin" Value="5"></Setter>
+            <Setter Property="ItemsControl.Padding" Value="0"></Setter>
+            <Setter Property="ItemsControl.VerticalAlignment" Value="Center"></Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15*" MinWidth="85"></ColumnDefinition>
+            <ColumnDefinition Width="75*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Style="{StaticResource ResourceKey=ControlStyle}" HorizontalAlignment="Center" Content="Group &#xD;&#xA;Number"/>
+            <TextBox Style="{StaticResource ControlStyle}" Height="30" PreviewTextInput="GroupNumber_PreviewTextInput" x:Name="GroupNumber"></TextBox>
+        </WrapPanel>
+
+        <Grid Grid.Column="1" MinWidth="290">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50*"></RowDefinition>
+                <RowDefinition Height="50*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <WrapPanel Grid.Row="0" Orientation="Vertical">
+                <Grid Width="332">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90*"></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource ControlStyle}">Position</TextBlock>
+                    <Button Grid.Column="1" x:Name="delete_group_1" Click="DeleteGroupsBlock"  Margin="3 0 0 0" Width="23" Height="23" Background="White">
+                        <Button.BorderThickness>0</Button.BorderThickness>
+                        <Image Source="resources/img/x.png"/>
+                    </Button>
+                </Grid>
+                
+                <StackPanel Orientation="Horizontal" Background="White">
+                    <TextBlock Style="{StaticResource ControlStyle}">UF :</TextBlock>
+                    <TextBox Style="{StaticResource ControlStyle}" x:Name="UserFrame" Width="50" PreviewTextInput="GroupNumber_PreviewTextInput">0</TextBox>
+                    <TextBlock Style="{StaticResource ControlStyle}">UT :</TextBlock>
+                    <TextBox Style="{StaticResource ControlStyle}" x:Name="UserTool" Width="50" PreviewTextInput="GroupNumber_PreviewTextInput">1</TextBox>
+                </StackPanel>
+            </WrapPanel>
+            <WrapPanel Grid.Row="1" Orientation="Vertical" >
+                <ListBox x:Name="GroupsCoordinates" BorderThickness="0" Style="{StaticResource ControlStyle}">
+                </ListBox>
+
+                <Button x:Name="addCoordinate" Click="AddCoordinateBlockFromButton" Width="25" HorizontalAlignment="Right" Margin="0 0 9 0" Background="White">
+                    <Button.BorderThickness>0</Button.BorderThickness>
+                    <Image Source="resources/img/plus.png"/>
+                </Button>
+
+            </WrapPanel>
+        </Grid>
+    </Grid>
+</UserControl>

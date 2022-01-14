@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="fanuc_group_exchange_desktop.View.CoordinatePanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal">
+        <TextBlock Padding="0 2" x:Name="CoordinateNumber">J1 =</TextBlock>
+        <TextBox Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180"/>
+        <ComboBox x:Name="Units" SelectedIndex="0">
+            <ComboBoxItem  Content="mm"/>
+            <ComboBoxItem  Content="deg"/>
+        </ComboBox>
+        <Button x:Name="delete_coordinate_1" Click="DeleteCoordinateBlock"  Margin="3 0 0 0" Width="23" Height="23" Background="White">
+            <Button.BorderThickness>0</Button.BorderThickness>
+            <Image Source="resources/img/x.png"/>
+        </Button>
+    </StackPanel>
+</UserControl>

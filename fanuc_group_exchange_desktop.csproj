@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="View\resources\img\plus.png" />
+    <None Remove="View\resources\img\remove.png" />
+    <None Remove="View\resources\img\x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="View\resources\img\plus.png" />
+    <Resource Include="View\resources\img\remove.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="View\resources\img\x.png" />
+  </ItemGroup>
+
+</Project>
