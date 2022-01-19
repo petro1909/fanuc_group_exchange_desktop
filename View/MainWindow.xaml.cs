@@ -56,11 +56,47 @@ namespace fanuc_group_exchange_desktop.View
 
         private void ShowUsedProgramGroups()
         {
-            UsedGroups.Text = "";
-            foreach (string group in fileWorker.UsedGroupsList)
+            List<string> groupList = fileWorker.UsedGroupsList;
+
+            for (int i = 0; i < groupList.Count; i++)
             {
-              UsedGroups.Text += group;
+                if(groupList[i] == "1")
+                {
+                    StackPanel stackPanel = new StackPanel()
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+                    TextBlock groupNumber = new TextBlock()
+                    {
+                        Height = 25,
+                        Text = "Group" + (i + 1).ToString(),
+                        VerticalAlignment = VerticalAlignment.Top
+                    };
+                    Button delete = new Button
+                    {
+                        Tag = (i + 1).ToString(),
+                        Height = 25,
+                        Content = "delete",
+                        VerticalAlignment = VerticalAlignment.Top
+                    };
+                    delete.Click += DeleteGroup;
+                    stackPanel.Children.Add(groupNumber);
+                    stackPanel.Children.Add(delete);
+                    UsedGroups.Children.Add(stackPanel);
+                }   
             }
+        }
+
+        public void DeleteGroup(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            int groupNumber = int.Parse(button.Tag.ToString());
+            fileWorker.deleteGroup(groupNumber);
+            FileCode.Text = fileWorker.combineFileParts();
+            StackPanel stack = button.Parent as StackPanel;
+            UsedGroups.Children.Remove(stack);
+
+
         }
 
 

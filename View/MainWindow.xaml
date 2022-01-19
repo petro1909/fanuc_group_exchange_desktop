@@ -51,8 +51,9 @@
                 <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" MinHeight="100">
-                <TextBlock x:Name="UsedGroups"></TextBlock>
+            <StackPanel x:Name="UsedGroups" Grid.Row="0" MinHeight="100" Orientation="Horizontal">
+              
+
             </StackPanel>
 
             <ScrollViewer Grid.Row="1" >

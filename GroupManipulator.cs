@@ -61,6 +61,12 @@ namespace fanuc_group_exchange_desktop
             return originUsedGroupList;
         }
 
+        public static void DeleteGroupInHeader(List<string> originUsedGroupList, int groupNumber)
+        {
+            originUsedGroupList.RemoveAt(groupNumber - 1);
+            
+        }
+
         public static List<RobotPosition> GetListOfPositionsWithAddedGroups(List<RobotPosition> originUsedGroupList, List<RobotGroup> addedGroupList)
         {
             foreach (RobotPosition position in originUsedGroupList)
@@ -72,6 +78,14 @@ namespace fanuc_group_exchange_desktop
                 
             }
             return originUsedGroupList;
+        }
+
+        public static void deleteGroupInPosition(List<RobotPosition> originUsedGroupList, int groupNumber)
+        {
+            foreach(RobotPosition position in originUsedGroupList)
+            {
+                position.RobotGroupsList.Remove(groupNumber);
+            }
         }
     }
 }

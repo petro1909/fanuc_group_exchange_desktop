@@ -107,7 +107,6 @@ namespace fanuc_group_exchange_desktop
             return "DEFAULT_GROUP\t= " + usedGroupString + ";\n";
         }
 
-
         public string setFanucLSFileHeaderBlock()
         {
             string headerBegin = _Header.Substring(0, _Header.IndexOf("DEFAULT_GROUP"));
@@ -152,6 +151,20 @@ namespace fanuc_group_exchange_desktop
                _Positions += position.ToString();
             }
         }
+
+        public void deleteGroup(int groupNumber)
+        {
+            GroupManipulator.DeleteGroupInHeader(_UsedGroupsList, groupNumber);
+            List<RobotPosition> positions = GroupManipulator.GetPositionList(_Positions);
+            GroupManipulator.deleteGroupInPosition(positions, groupNumber);
+            _Positions = "";
+            foreach (RobotPosition position in positions)
+            {
+                _Positions += position.ToString();
+            }
+        }
+
+
 
         public string setFanucLSFilePositionsBlock()
         {
