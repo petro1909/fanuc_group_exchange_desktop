@@ -5,13 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
         mc:Ignorable="d"
-        Title="Group Exchanger" HorizontalAlignment="Center" Height="600" MinHeight="500" Width="970" MinWidth="970">
+        Title="Group Exchanger" HorizontalAlignment="Center" Height="600" MinHeight="500" Width="970" MinWidth="970" Background="#FF3E3E40" Foreground="#FF2D2D30">
 
     <Window.Resources>
         <Style TargetType="Button">
-            <Setter Property="FontSize" Value="18"></Setter>
-            <Setter Property="FontWeight" Value="Medium"></Setter>
-            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="FontSize" Value="20"></Setter>
+            <Setter Property="FontWeight" Value="Heavy"></Setter>
+            <Setter Property="Background" Value="#FF2D2D30"></Setter>
+            <Setter Property="Foreground" Value="#FFF1F1F1"></Setter>
+            <Setter Property="FontFamily" Value="Leelawadee UI"></Setter>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Background" Value="#FF1E1E1E"></Setter>
         </Style>
     </Window.Resources>
     
@@ -28,7 +33,7 @@
             </Grid.RowDefinitions>
             
             <ScrollViewer>
-                <TextBlock FontFamily="Consolas" FontSize="12" FontWeight="Normal"  Grid.Row="0" x:Name="FileCode" ScrollViewer.VerticalScrollBarVisibility="Visible" />
+                <TextBlock Foreground="#FFDCDCDC"  FontFamily="Consolas" FontSize="12" FontWeight="Normal"  Grid.Row="0" x:Name="FileCode" ScrollViewer.VerticalScrollBarVisibility="Visible" />
             </ScrollViewer>
 
             <Grid Grid.Row="1" VerticalAlignment="Bottom">
@@ -43,17 +48,15 @@
             </Grid>
         </Grid>
 
-        <Grid x:Name="GroupInforamtion" Grid.Column="1">
+        <Grid x:Name="GroupInforamtion" Grid.Column="1" Background="#FF1E1E1E">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20*"></RowDefinition>
                 <RowDefinition Height="70*"></RowDefinition>
-                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
                 <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
 
             <StackPanel x:Name="UsedGroups" Grid.Row="0" MinHeight="100" Orientation="Horizontal">
-              
-
             </StackPanel>
 
             <ScrollViewer Grid.Row="1" >

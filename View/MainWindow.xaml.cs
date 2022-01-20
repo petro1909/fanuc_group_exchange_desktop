@@ -47,7 +47,8 @@ namespace fanuc_group_exchange_desktop.View
             if (dialog.ShowDialog() == DialogResult.HasValue) return;
 
             filePath = dialog.FileName;
-            
+            UsedGroups.Children.Clear();
+
             fileWorker.ReadFromFile(filePath);
             FileCode.Text = fileWorker.combineFileParts();
 
@@ -127,31 +128,36 @@ namespace fanuc_group_exchange_desktop.View
 
         public void SaveGroup_Click(object sender, RoutedEventArgs e)
         {
-            AddGroupsToPositions();
-            ShowUsedProgramGroups();
-            FileCode.Text = fileWorker.combineFileParts();
+            if (string.IsNullOrEmpty(FileCode.Text)) return;
+            if(AddGroupsToPositions()==default) return;
+                ShowUsedProgramGroups();
+                FileCode.Text = fileWorker.combineFileParts();
+            
         }
 
 
-        public void AddGroupsToPositions()
+        public int AddGroupsToPositions()
         {
-                List<RobotGroup> robotGroups = GetGroupsList();
+            if (string.IsNullOrEmpty(FileCode.Text)) return default;
+            List<RobotGroup> robotGroups = GetGroupsList();
+            if (robotGroups != null) 
+            {
                 fileWorker.setFanucLSFilePositions(robotGroups);
+                return 1;
+            }
+            return default;
         }
 
         public List<RobotGroup> GetGroupsList()
         {
 
             List<RobotGroup> robotGroups = new List<RobotGroup>();
-
             int groupsCount = Groups.Items.Count;
-            
-            if(groupsCount == 0)
-            {
-                return robotGroups;
-            }
+            if(groupsCount == 0) return default;
 
-            for (int i = 0; i < groupsCount; i++)
+            try
+            {
+                for (int i = 0; i < groupsCount; i++)
                 {
                     GroupPanel groupPanel = (GroupPanel)Groups.Items[i];
 
@@ -189,6 +195,10 @@ namespace fanuc_group_exchange_desktop.View
                     robotGroups.Add(robotGroup);
                 }
                 return robotGroups;
+            } catch(Exception e)
+            {
+                return default;
+            }
             
         }
 
@@ -198,5 +208,9 @@ namespace fanuc_group_exchange_desktop.View
             Groups.Items.Add(new GroupPanel());
         }
 
+        private void close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

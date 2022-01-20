@@ -49,14 +49,17 @@ namespace fanuc_group_exchange_desktop
 
         public static List<string> GetListOfUsedGroupsInHeader(List<string> originUsedGroupList, List<RobotGroup> addedGroupList)
         {
-            foreach (RobotGroup robotGroup in addedGroupList)
+            if (addedGroupList != null)
             {
-                int diff = robotGroup.Number - originUsedGroupList.Count;
-                if (diff > 0)
+                foreach (RobotGroup robotGroup in addedGroupList)
                 {
-                    originUsedGroupList.AddRange(Enumerable.Repeat("*", diff));
+                    int diff = robotGroup.Number - originUsedGroupList.Count;
+                    if (diff > 0)
+                    {
+                        originUsedGroupList.AddRange(Enumerable.Repeat("*", diff));
+                    }
+                    originUsedGroupList[robotGroup.Number - 1] = "1";
                 }
-                originUsedGroupList[robotGroup.Number - 1] = "1";
             }
             return originUsedGroupList;
         }
@@ -69,13 +72,16 @@ namespace fanuc_group_exchange_desktop
 
         public static List<RobotPosition> GetListOfPositionsWithAddedGroups(List<RobotPosition> originUsedGroupList, List<RobotGroup> addedGroupList)
         {
-            foreach (RobotPosition position in originUsedGroupList)
+            if (addedGroupList != null)
             {
-                foreach (RobotGroup robotGroup in addedGroupList)
+                foreach (RobotPosition position in originUsedGroupList)
                 {
-                    position.RobotGroupsList.Add(robotGroup.Number, robotGroup);
+                    foreach (RobotGroup robotGroup in addedGroupList)
+                    {
+                        position.RobotGroupsList.Add(robotGroup.Number, robotGroup);
+                    }
+
                 }
-                
             }
             return originUsedGroupList;
         }
