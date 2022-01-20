@@ -150,7 +150,6 @@ namespace fanuc_group_exchange_desktop.View
 
         public List<RobotGroup> GetGroupsList()
         {
-
             List<RobotGroup> robotGroups = new List<RobotGroup>();
             int groupsCount = Groups.Items.Count;
             if(groupsCount == 0) return default;
