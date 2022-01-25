@@ -25,7 +25,12 @@ namespace fanuc_group_exchange_desktop.View
     public partial class MainWindow : Window
     {
         string filePath = "";
-        
+        bool isFullScreen = false;
+        double height;
+        double width;
+        double left;
+        double top;
+
 
         FileWorker fileWorker;
         GroupManipulator groupManipulator;
@@ -34,8 +39,15 @@ namespace fanuc_group_exchange_desktop.View
         {
             fileWorker = new FileWorker();
             groupManipulator = new GroupManipulator();
-            
+
             InitializeComponent();
+            height = this.Height;
+            width = this.Width;
+            left = this.Left;
+            top = this.Top;
+
+
+
             Groups.Items.Add(new GroupPanel());
 
             FileCode.Text = null;
@@ -58,10 +70,10 @@ namespace fanuc_group_exchange_desktop.View
         private void ShowUsedProgramGroups()
         {
             List<string> groupList = fileWorker.UsedGroupsList;
-
+            UsedGroups.Children.Clear();
             for (int i = 0; i < groupList.Count; i++)
             {
-                if(groupList[i] == "1")
+                if (groupList[i] == "1")
                 {
                     StackPanel stackPanel = new StackPanel()
                     {
@@ -71,7 +83,8 @@ namespace fanuc_group_exchange_desktop.View
                     {
                         Height = 25,
                         Text = "Group" + (i + 1).ToString(),
-                        VerticalAlignment = VerticalAlignment.Top
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Foreground = new SolidColorBrush(Colors.White)
                     };
                     Button delete = new Button
                     {
@@ -84,7 +97,7 @@ namespace fanuc_group_exchange_desktop.View
                     stackPanel.Children.Add(groupNumber);
                     stackPanel.Children.Add(delete);
                     UsedGroups.Children.Add(stackPanel);
-                }   
+                }
             }
         }
 
@@ -104,7 +117,7 @@ namespace fanuc_group_exchange_desktop.View
         public void SaveFile(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(FileCode.Text)) return;
-            
+
             string file = fileWorker.combineFileParts();
             fileWorker.WriteToFile(filePath, file);
         }
@@ -112,8 +125,8 @@ namespace fanuc_group_exchange_desktop.View
         public void SaveFileAs(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(FileCode.Text)) return;
-            
-            
+
+
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Файлы программ (*.LS)|*.ls";
             if (dialog.ShowDialog() == DialogResult.HasValue) return;
@@ -129,10 +142,10 @@ namespace fanuc_group_exchange_desktop.View
         public void SaveGroup_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(FileCode.Text)) return;
-            if(AddGroupsToPositions()==default) return;
-                ShowUsedProgramGroups();
-                FileCode.Text = fileWorker.combineFileParts();
-            
+            if (AddGroupsToPositions() == default) return;
+            ShowUsedProgramGroups();
+            FileCode.Text = fileWorker.combineFileParts();
+
         }
 
 
@@ -140,7 +153,7 @@ namespace fanuc_group_exchange_desktop.View
         {
             if (string.IsNullOrEmpty(FileCode.Text)) return default;
             List<RobotGroup> robotGroups = GetGroupsList();
-            if (robotGroups != null) 
+            if (robotGroups != null)
             {
                 fileWorker.setFanucLSFilePositions(robotGroups);
                 return 1;
@@ -152,7 +165,7 @@ namespace fanuc_group_exchange_desktop.View
         {
             List<RobotGroup> robotGroups = new List<RobotGroup>();
             int groupsCount = Groups.Items.Count;
-            if(groupsCount == 0) return default;
+            if (groupsCount == 0) return default;
 
             try
             {
@@ -194,22 +207,102 @@ namespace fanuc_group_exchange_desktop.View
                     robotGroups.Add(robotGroup);
                 }
                 return robotGroups;
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
+                MessageBoxResult messageBox =  MessageBox.Show("FSEF" + e.Message);
                 return default;
             }
-            
+
         }
-
-
         private void AddGroupPanel(object sender, RoutedEventArgs e)
         {
             Groups.Items.Add(new GroupPanel());
         }
 
-        private void close_Click(object sender, RoutedEventArgs e)
+
+
+
+        private void DragWindow(object sender, MouseButtonEventArgs e)
         {
-            this.Close();
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                //WinParameters.Drag(Application.Current.MainWindow , isFullScreen);
+                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\icons8maximize32.png", UriKind.Relative));
+                this.DragMove();
+            }
+        }
+
+
+        private void MinimizeWindowClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
+
+
+        private void ChangeSinzeOfWindowClick(object sender, RoutedEventArgs e)
+        {
+            if (isFullScreen == true)
+            {
+                WinParameters.ChangeSize(Application.Current.MainWindow, isFullScreen);
+                isFullScreen = false;
+                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\icons8maximize32.png", UriKind.Relative));
+            }
+            else
+            {
+                WinParameters.ChangeSize(Application.Current.MainWindow, isFullScreen);
+                isFullScreen = true;
+                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\icons8-minimize-32.png", UriKind.Relative));
+            }
+        }
+
+        private void CloseWindowClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public class WinParameters
+        {
+            static double Height;
+            static double Width;
+            static double Left;
+            static double Top;
+
+            public WinParameters()
+            {
+
+            }
+
+            public static void ChangeSize(Window window, bool isFullScreen)
+            {
+                if (isFullScreen == false)
+                {
+                    Height = window.Height;
+                    Width = window.Width;
+                    Left = window.Left;
+                    Top = window.Top;
+                    window.Height = SystemParameters.WorkArea.Height;
+                    window.Width = SystemParameters.WorkArea.Width;
+                    window.Left = SystemParameters.WorkArea.Left;
+                    window.Top = SystemParameters.WorkArea.Top;
+                }
+                else
+                {
+                    window.Height = Height;
+                    window.Width = Width;
+                    window.Left = Left;
+                    window.Top = Top;
+                }
+            }
+
+            public static void Drag(Window window, bool isFullScreen)
+            {
+                if (isFullScreen == true)
+                {
+                    window.Height = Height;
+                    window.Width = Width;
+                }
+            }
         }
     }
 }

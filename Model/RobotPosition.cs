@@ -7,23 +7,16 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    public class RobotPosition
+    public class RobotPosition : BasicInstance
     {
-        private int _PositionNumber;
+        private string _PositionComment;
         private SortedDictionary<int, RobotGroup> _RobotGroupsList;
 
-        public int PositionNumber {
-            set {
-                if (value <= 0)
-                {
-                    Console.WriteLine("Number of position can't be less a zero");
-                }
-                else 
-                { 
-                    this._PositionNumber = value; 
-                }
-            }
-            get { return _PositionNumber; } 
+
+        public string PositionComment
+        {
+            set { this._PositionComment = value; }
+            get { return _PositionComment; }
         }
 
         public SortedDictionary<int, RobotGroup> RobotGroupsList
@@ -39,13 +32,19 @@ namespace fanuc_group_exchange_desktop.Model
 
         }
  
-        public RobotPosition(int positionNumber, SortedDictionary<int, RobotGroup> robotGroupsList)
+        public RobotPosition()
         {
-            PositionNumber = positionNumber;
-            RobotGroupsList = robotGroupsList;
+
         }
 
-        public static RobotPosition ParsePositionFromString(string positionString)
+        public RobotPosition(int positionNumber, string positionComment, SortedDictionary<int, RobotGroup> robotGroupsList)
+        {
+            Number = positionNumber;
+            RobotGroupsList = robotGroupsList;
+            PositionComment = positionComment;
+        }
+
+        public override void Parse(string positionString)
         {
             positionString = positionString.Trim();
 
@@ -53,6 +52,15 @@ namespace fanuc_group_exchange_desktop.Model
             string positionNumberString = positionString.Substring(0, positionString.IndexOf("GP"));
             Regex positionNumberRegex = new Regex("\\d+");
             int positionNumber = int.Parse(positionNumberRegex.Match(positionNumberString).Value);
+
+            //get position comment
+            string positionComment = "";
+            int index = positionNumberString.IndexOf('"');
+            if (index != -1)
+            {
+                string StartOfComment = positionNumberString.Substring(index);
+                positionComment = ":" + StartOfComment.Substring(0, StartOfComment.LastIndexOf(']'));
+            }
 
             //get string with robot groups and parse to robot groups list
             SortedDictionary<int, RobotGroup> groupsDictionary = new SortedDictionary<int, RobotGroup>();
@@ -77,10 +85,12 @@ namespace fanuc_group_exchange_desktop.Model
                 {
                     robotGroup = new RobotNotFirstGroup(groupNumber);
                 }
-                robotGroup.ParseGroupInPositionFromString(groupString);
+                robotGroup.Parse(groupString);
                 groupsDictionary.Add(robotGroup.Number, robotGroup);
             }
-            return new RobotPosition(positionNumber, groupsDictionary);
+            this._Number = positionNumber;
+            this._PositionComment = positionComment;
+            this._RobotGroupsList = groupsDictionary;
         }
         public override string ToString()
         {
@@ -89,7 +99,7 @@ namespace fanuc_group_exchange_desktop.Model
             {
                 robotGroups += "   " + robotGroup.Value.ToString();
             }
-            return "\nP[" + _PositionNumber.ToString() + "]{\n" +  robotGroups + "\n};";
+            return "\nP[" + _Number.ToString() + _PositionComment +  "]{\n" +  robotGroups + "\n};";
         }
     }
 }

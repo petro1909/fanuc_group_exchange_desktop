@@ -6,26 +6,9 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    public abstract class RobotGroup
+    public abstract class RobotGroup : BasicInstance
     {
 
-        protected internal int _Number;
-       
-
-        public int Number {
-            set{
-                if (value <= 0) 
-                { 
-                    Console.WriteLine("Group number can't be less or be a zero"); 
-                }
-                else
-                {
-                    _Number = value;
-                } 
-            }
-            get { return _Number; }   
-        }
-
-        public abstract void ParseGroupInPositionFromString(string groupString);
+        public override abstract void Parse(string groupString);
     }
 }

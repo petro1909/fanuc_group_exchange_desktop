@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    public enum RobotUnitsEnum
+    interface Parser
     {
-        mm,
-        deg
+
+        public void Parse(string str);
+
     }
 }

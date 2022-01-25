@@ -5,16 +5,25 @@ VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fanuc_group_exchange_desktop", "fanuc_group_exchange_desktop.csproj", "{D6074F64-734E-4167-AC67-E12DD5B24635}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup1GE", "..\Setup1GE\Setup1GE.vdproj", "{31E6CA9C-FC7E-46F2-AD41-AAB64CF582E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		All|Any CPU = All|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6074F64-734E-4167-AC67-E12DD5B24635}.All|Any CPU.ActiveCfg = Release|Any CPU
+		{D6074F64-734E-4167-AC67-E12DD5B24635}.All|Any CPU.Build.0 = Release|Any CPU
 		{D6074F64-734E-4167-AC67-E12DD5B24635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6074F64-734E-4167-AC67-E12DD5B24635}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6074F64-734E-4167-AC67-E12DD5B24635}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6074F64-734E-4167-AC67-E12DD5B24635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31E6CA9C-FC7E-46F2-AD41-AAB64CF582E0}.All|Any CPU.ActiveCfg = Debug
+		{31E6CA9C-FC7E-46F2-AD41-AAB64CF582E0}.Debug|Any CPU.ActiveCfg = Debug
+		{31E6CA9C-FC7E-46F2-AD41-AAB64CF582E0}.Release|Any CPU.ActiveCfg = Release
+		{31E6CA9C-FC7E-46F2-AD41-AAB64CF582E0}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

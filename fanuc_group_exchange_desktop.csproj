@@ -4,19 +4,41 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon />
+    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="View\resources\img\icons8-cancel-64.png" />
+    <None Remove="View\resources\img\icons8-minimize-32.png" />
+    <None Remove="View\resources\img\icons8-plus-24.png" />
+    <None Remove="View\resources\img\icons8-вычитание-50.png" />
+    <None Remove="View\resources\img\icons8-удалить-50.png" />
+    <None Remove="View\resources\img\icons8-удалить.svg" />
+    <None Remove="View\resources\img\icons8del32.png" />
+    <None Remove="View\resources\img\icons8maximize32.png" />
     <None Remove="View\resources\img\plus.png" />
+    <None Remove="View\resources\img\pngfind.com-robot-icon-png-1400144.png" />
     <None Remove="View\resources\img\remove.png" />
+    <None Remove="View\resources\img\squares.png" />
     <None Remove="View\resources\img\x.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="View\resources\img\icons8-cancel-64.png" />
+    <Resource Include="View\resources\img\icons8-minimize-32.png" />
+    <Resource Include="View\resources\img\icons8-plus-24.png" />
+    <Resource Include="View\resources\img\icons8-вычитание-50.png" />
+    <Resource Include="View\resources\img\icons8maximize32.png" />
+    <Resource Include="View\resources\img\icons8del32.png" />
+    <Resource Include="View\resources\img\icons8-удалить-50.png" />
+    <Resource Include="View\resources\img\icons8-удалить.svg" />
     <Resource Include="View\resources\img\plus.png" />
+    <Resource Include="View\resources\img\pngfind.com-robot-icon-png-1400144.png" />
     <Resource Include="View\resources\img\remove.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="View\resources\img\squares.png" />
     <Resource Include="View\resources\img\x.png" />
   </ItemGroup>
 

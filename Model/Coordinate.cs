@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    public class Coordinate
+    public class Coordinate : BasicInstance
     {
         private int _CoordinateNumber;
         private double _CoordinatePosition;
@@ -51,7 +51,7 @@ namespace fanuc_group_exchange_desktop.Model
         }
 
 
-        public void ParseCoordinateInGroupFromString(string coordinateString)
+        public override void Parse(string coordinateString)
         {
             Regex counterRegex = new Regex("J\\d+");
             string coordinateCounterString = counterRegex.Match(coordinateString).Value;

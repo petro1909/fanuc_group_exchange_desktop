@@ -71,7 +71,7 @@ namespace fanuc_group_exchange_desktop.Model
             this.Coordinates = Coordinates;
         }
 
-        public override void ParseGroupInPositionFromString(string groupString)
+        public override void Parse(string groupString)
         {
 
             string groupFrames = groupString.Substring(groupString.IndexOf("UF"));
@@ -92,7 +92,7 @@ namespace fanuc_group_exchange_desktop.Model
             foreach (string coordinateString in coordinatesList)
             {
                 Coordinate coordinate = new Coordinate();
-                coordinate.ParseCoordinateInGroupFromString(coordinateString);
+                coordinate.Parse(coordinateString);
                 Coordinates.Add(coordinate);
             }
             this.UserFrame = UserFrame;
@@ -111,7 +111,7 @@ namespace fanuc_group_exchange_desktop.Model
                     coordinateString += ",";
             }
             return "\n" +
-            "   GP" + _Number + ":\n" +
+            "   GP" + this._Number + ":\n" +
             "\tUF : " + _UserFrame + ", UT : " + _UserTool + ",\n" + coordinateString;
         }
     }

@@ -30,7 +30,7 @@ namespace fanuc_group_exchange_desktop.Model
             this.Number = Number;
         }
 
-        public override void ParseGroupInPositionFromString(string CoordinatesString)
+        public override void Parse(string CoordinatesString)
         {
             this.CoordinatesString = CoordinatesString;
         }

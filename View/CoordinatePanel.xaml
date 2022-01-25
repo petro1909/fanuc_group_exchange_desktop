@@ -5,16 +5,17 @@
              xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d">
-    <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal">
-        <TextBlock Padding="0 2" x:Name="CoordinateNumber">J1 =</TextBlock>
-        <TextBox Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180"/>
+    <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
+        <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" >J1 =</TextBlock>
+        <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180"/>
         <ComboBox x:Name="Units" SelectedIndex="0">
-            <ComboBoxItem  Content="mm"/>
+            <ComboBoxItem  Content="mm" />
             <ComboBoxItem  Content="deg"/>
         </ComboBox>
-        <Button x:Name="delete_coordinate_1" Click="DeleteCoordinateBlock"  Margin="3 0 0 0" Width="23" Height="23" Background="White">
+        <Button x:Name="delete_coordinate_1" Click="DeleteCoordinateBlock"  Margin="3 0 0 0" Width="23" Height="23" Background="#FF1E1E1E">
+            
             <Button.BorderThickness>0</Button.BorderThickness>
-            <Image Source="resources/img/x.png"/>
+            <Image Source="resources/img/icons8-cancel-64.png"></Image>
         </Button>
     </StackPanel>
 </UserControl>

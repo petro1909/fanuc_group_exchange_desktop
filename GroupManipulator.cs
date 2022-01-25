@@ -38,7 +38,9 @@ namespace fanuc_group_exchange_desktop
             
                 foreach (string positionString in positionStringList)
                 {
-                    positionList.Add(RobotPosition.ParsePositionFromString(positionString));
+                    RobotPosition robotPosition = new RobotPosition();
+                    robotPosition.Parse(positionString);
+                    positionList.Add(robotPosition);
                 }
                 return positionList;
             } catch(NullReferenceException e)
@@ -78,7 +80,14 @@ namespace fanuc_group_exchange_desktop
                 {
                     foreach (RobotGroup robotGroup in addedGroupList)
                     {
-                        position.RobotGroupsList.Add(robotGroup.Number, robotGroup);
+                        if (position.RobotGroupsList.ContainsKey(robotGroup.Number))
+                        {
+                            position.RobotGroupsList[robotGroup.Number] = robotGroup;
+                        }
+                        else
+                        {
+                            position.RobotGroupsList.Add(robotGroup.Number, robotGroup);
+                        }
                     }
 
                 }
