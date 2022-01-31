@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    class RobotFirstGroup : RobotGroup
+    public class RobotFirstGroup : RobotGroup
     {
         private string _CoordinatesString = "";
 

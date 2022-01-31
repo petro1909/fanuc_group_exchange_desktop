@@ -75,7 +75,7 @@ namespace fanuc_group_exchange_desktop.Model
             {
                 string groupString = strGroups[i];
                 
-                string strGroupNumber = groupString.Substring(groupString.IndexOf("GP"), 3);
+                string strGroupNumber = groupString.Substring(groupString.IndexOf("GP"), groupString.IndexOf(":") - groupString.IndexOf("GP"));
                 int groupNumber = int.Parse(strGroupNumber.Substring(2));
 
                 if (groupNumber == 1)

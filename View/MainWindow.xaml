@@ -6,44 +6,23 @@
         xmlns:local="clr-namespace:fanuc_group_exchange_desktop"
         mc:Ignorable="d"
         Title="Fanuc Group Exchanger" 
+        WindowStyle="None" 
+        AllowsTransparency="False"
+        ResizeMode="CanResizeWithGrip"
+        MinHeight="500" 
+        MinWidth="970">
         
-        WindowStyle="None" ShowInTaskbar="True"
         
-        >
 
     <Window.Resources>
-        <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="#FF1E1E1E"/>
-            <Setter Property="Foreground" Value="#FF3C3C3C"></Setter>
-            <Setter Property="BorderThickness" Value="0"></Setter>
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="FontSize" Value="20"></Setter>
-            <Setter Property="FontWeight" Value="Heavy"></Setter>
-            <Setter Property="Background" Value="#FF2D2D30"></Setter>
-            <Setter Property="Foreground" Value="#FFF1F1F1"></Setter>
-            <Setter Property="FontFamily" Value="Leelawadee UI"></Setter>
-            <Setter Property="BorderThickness" Value="0"></Setter>
-        </Style>
-        <Style x:Key="DarkThemeTextBlock">
-            <Setter Property="ItemsControl.Background" Value="#FF1E1E1E"/>
-            <Setter Property="ItemsControl.Foreground" Value="#FFDCDCDC"/>
-            <Setter Property="ItemsControl.FontFamily" Value="Consolas"/>
-            <Setter Property="ItemsControl.FontSize" Value="12"/>
-            <Setter Property="ItemsControl.FontWeight" Value="Normal"/>
-            <Setter Property="ItemsControl.Margin" Value="3"/>
-            <Setter Property="ItemsControl.VerticalAlignment" Value="Center"></Setter>
-        </Style>
-        <Style x:Key="WindowMenuButton">
-            <Setter Property="ItemsControl.Background" Value="#FF3C3C3C"/>
-            <Setter Property="ItemsControl.BorderThickness" Value="0"/>
-            <Setter Property="ItemsControl.Margin" Value="1"/>
-            <Setter Property="ItemsControl.Width" Value="40"></Setter>
-            <Setter Property="ItemsControl.Height" Value="22"></Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="resources/dictionaries/DarkThemeWinDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
-    <Grid x:Name="MainGrid" Background="#FF1E1E1E" MinHeight="500" MinWidth="970" >
+    <Grid x:Name="MainGrid" Background="#FF1E1E1E"  >
 
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -63,17 +42,17 @@
 
             <StackPanel  Grid.Column="0" Orientation="Horizontal" Margin="5 0 0 0">
                 <Image Source="resources/img/pngfind.com-robot-icon-png-1400144.png" Width="18" Height="18" ></Image>
-                <TextBlock Style="{StaticResource DarkThemeTextBlock}" Text="Fanuc Group Exchanger"></TextBlock>
+                <TextBlock Text="Fanuc Group Exchanger"></TextBlock>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal"  HorizontalAlignment="Right">
-                <Button x:Name="MinimizeWindow" Style="{StaticResource WindowMenuButton}" Click="MinimizeWindowClick">
-                    <Image Source="resources/img/icons8-вычитание-50.png" Height="20"></Image>
+                <Button x:Name="MinimizeWindow"  Click="MinimizeWindowClick">
+                    <Image Source="resources/img/icons8-вычитание-50.png" ></Image>
                 </Button>
-                <Button x:Name="ChangeSinzeOfWindow" Style="{StaticResource WindowMenuButton}" Click="ChangeSinzeOfWindowClick">
-                    <Image x:Name="ChangeSinzeOfWindowImage"   Source="resources/img/icons8maximize32.png" Height="20" ></Image>
+                <Button x:Name="ChangeSinzeOfWindow"   Click="ChangeSinzeOfWindowClick">
+                    <Image x:Name="ChangeSinzeOfWindowImage"   Source="resources/img/icons8maximize32.png"></Image>
                 </Button>
-                <Button x:Name="CloseeWindow"  Style="{StaticResource WindowMenuButton}" Click="CloseWindowClick">
+                <Button x:Name="CloseeWindow"   Click="CloseWindowClick">
                     <Image Source="resources/img/icons8del32.png"></Image>
                 </Button>
             </StackPanel>
@@ -83,32 +62,25 @@
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="95*"></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
             </Grid.RowDefinitions>
 
             <ScrollViewer>
-
-                <TextBlock Style="{StaticResource DarkThemeTextBlock}" Grid.Row="0" x:Name="FileCode" ScrollViewer.VerticalScrollBarVisibility="Visible" />
+                <TextBlock Grid.Row="0" x:Name="FileCode" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" />
             </ScrollViewer>
 
-            <Grid Grid.Row="1" VerticalAlignment="Bottom">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"></ColumnDefinition>
-                    <ColumnDefinition Width="1*"></ColumnDefinition>
-                    <ColumnDefinition Width="1*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button  Grid.Column="0" x:Name="OpenFile" Height="50" MinWidth="130" Click="GetFileCode">Open File</Button>
-                <Button  Grid.Column="1" x:Name="Save" Height="50" MinWidth="130" Click="SaveFile">Save</Button>
-                <Button  Grid.Column="2" x:Name="SaveAs" Height="50" MinWidth="130" Click="SaveFileAs">Save As</Button>
-            </Grid>
+            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="OpenFile" Width="100" Click="GetFileCode">Open File</Button>
+                <Button x:Name="Save" Width="100"  Click="SaveFile">Save</Button>
+                <Button x:Name="SaveAs" Width="100"  Click="SaveFileAs" >Save as</Button>
+            </StackPanel>
         </Grid>
 
         <Grid x:Name="GroupInforamtion" Grid.Row="1" Grid.Column="1" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="20*"></RowDefinition>
                 <RowDefinition Height="70*"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="70"></RowDefinition>
             </Grid.RowDefinitions>
 
             <StackPanel x:Name="UsedGroups" Grid.Row="0" MinHeight="100" Orientation="Horizontal">
@@ -119,9 +91,10 @@
                     <ListBox x:Name="Groups" BorderThickness="0"></ListBox>
                 </StackPanel>
             </ScrollViewer>
-
-            <Button Grid.Row="2"   x:Name="AddGroup" Click="AddGroupPanel">Add Group Block</Button>
-            <Button Grid.Row="3" x:Name="SaveGroups" Click="SaveGroup_Click">Save Groups</Button>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Left" Width="170">
+                <Button x:Name="AddGroup" Content="Add Group Block" Click="AddGroupPanel"/>
+                <Button x:Name="SaveGroups" Content="Save Group" Click="SaveGroup_Click"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

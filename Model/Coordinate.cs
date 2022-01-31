@@ -10,24 +10,9 @@ namespace fanuc_group_exchange_desktop.Model
 {
     public class Coordinate : BasicInstance
     {
-        private int _CoordinateNumber;
         private double _CoordinatePosition;
         private string _CoordinateUnit;
 
-
-        public int CoordinateNumber
-        {
-            set { 
-                if(value<=0)
-                {
-                    Console.WriteLine("Number of Coordinate can't be less or be a zero");
-                } else
-                {
-                    _CoordinateNumber = value;
-                }    
-            }
-            get { return _CoordinateNumber; }
-        }
 
         public double CoordinatePosition
         {
@@ -43,9 +28,14 @@ namespace fanuc_group_exchange_desktop.Model
 
         public Coordinate() { }
 
+        public Coordinate(int Number)
+        {
+            this.Number = Number; 
+        }
+
         public Coordinate(int CoordinateNumber, double CoordinatePosition, string CoordinateUnit)
         {
-            this.CoordinateNumber = CoordinateNumber;
+            this.Number = CoordinateNumber;
             this.CoordinatePosition = CoordinatePosition;
             this.CoordinateUnit = CoordinateUnit;
         }
@@ -64,14 +54,14 @@ namespace fanuc_group_exchange_desktop.Model
             Regex unitRegex = new Regex("mm|deg");
             string CoordinateUnit = unitRegex.Match(coordinateString).Value;
 
-            this.CoordinateNumber = CoordinateNumber;
+            this.Number = CoordinateNumber;
             this.CoordinatePosition = CoordinatePosition;
             this.CoordinateUnit = CoordinateUnit;
         }
 
         public override string ToString()
         {
-            string coordinateNumberString = "J" + _CoordinateNumber.ToString();
+            string coordinateNumberString = "J" + _Number.ToString();
 
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
             string coordinatePositionString1 = String.Format(formatter, "{0:0.000}", _CoordinatePosition);

@@ -68,8 +68,7 @@ namespace fanuc_group_exchange_desktop
 
         public static void DeleteGroupInHeader(List<string> originUsedGroupList, int groupNumber)
         {
-            originUsedGroupList.RemoveAt(groupNumber - 1);
-            
+            originUsedGroupList[groupNumber - 1] = "*";
         }
 
         public static List<RobotPosition> GetListOfPositionsWithAddedGroups(List<RobotPosition> originUsedGroupList, List<RobotGroup> addedGroupList)

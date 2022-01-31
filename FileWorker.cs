@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop
 {
-    class FileWorker
+    public class FileWorker
     {
         private string _FileName;
         private List<string> _UsedGroupsList;
@@ -155,6 +155,7 @@ namespace fanuc_group_exchange_desktop
         public void deleteGroup(int groupNumber)
         {
             GroupManipulator.DeleteGroupInHeader(_UsedGroupsList, groupNumber);
+            
             List<RobotPosition> positions = GroupManipulator.GetPositionList(_Positions);
             GroupManipulator.deleteGroupInPosition(positions, groupNumber);
             _Positions = "";

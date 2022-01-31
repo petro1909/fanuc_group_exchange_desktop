@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    class RobotNotFirstGroup : RobotGroup
+    public class RobotNotFirstGroup : RobotGroup
     {
         private int _UserFrame;
         private int _UserTool;
@@ -56,11 +56,19 @@ namespace fanuc_group_exchange_desktop.Model
                 return _Coordinates;
             }
         }
-        public RobotNotFirstGroup() { }
+        public RobotNotFirstGroup() {
+            Coordinates = new List<Coordinate>();
+        }
 
         public RobotNotFirstGroup(int Number)
         {
             this.Number = Number;
+        }
+
+        public RobotNotFirstGroup(int UserFrame, int UserTool)
+        {
+            this.UserFrame = UserFrame;
+            this.UserTool = UserTool;
         }
 
         public RobotNotFirstGroup(int Number, int UserFrame, int UserTool, List<Coordinate> Coordinates)
@@ -107,7 +115,7 @@ namespace fanuc_group_exchange_desktop.Model
             for (int i = 0; i < _Coordinates.Count; i++)
             {
                 coordinateString += Coordinates[i].ToString();
-                if (_Coordinates[i].CoordinateNumber != Coordinates.Count)
+                if (_Coordinates[i].Number != Coordinates.Count)
                     coordinateString += ",";
             }
             return "\n" +

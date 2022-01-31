@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using fanuc_group_exchange_desktop.ViewModel;
 
-namespace fanuc_group_exchange_desktop.View
+namespace fanuc_group_exchange_desktop.ViewMVVM
 {
     /// <summary>
     /// Interaction logic for CoordinatePanel.xaml
