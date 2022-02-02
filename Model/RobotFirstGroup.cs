@@ -30,8 +30,9 @@ namespace fanuc_group_exchange_desktop.Model
             this.Number = Number;
         }
 
-        public override void Parse(string CoordinatesString)
+        public RobotFirstGroup(int Number, string CoordinatesString)
         {
+            this.Number = Number;
             this.CoordinatesString = CoordinatesString;
         }
 

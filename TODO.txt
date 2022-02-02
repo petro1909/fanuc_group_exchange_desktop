@@ -1,5 +1,4 @@
-﻿--Add some styles
---Add adaptive design
---Import mvvm pattern -- do to end
+﻿--Add custom window methods to hove the window
 --Add some instructions
 --Add multithreading
+--Add tests

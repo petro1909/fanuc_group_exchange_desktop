@@ -44,54 +44,7 @@ namespace fanuc_group_exchange_desktop.Model
             PositionComment = positionComment;
         }
 
-        public override void Parse(string positionString)
-        {
-            positionString = positionString.Trim();
-
-            //get position number
-            string positionNumberString = positionString.Substring(0, positionString.IndexOf("GP"));
-            Regex positionNumberRegex = new Regex("\\d+");
-            int positionNumber = int.Parse(positionNumberRegex.Match(positionNumberString).Value);
-
-            //get position comment
-            string positionComment = "";
-            int index = positionNumberString.IndexOf('"');
-            if (index != -1)
-            {
-                string StartOfComment = positionNumberString.Substring(index);
-                positionComment = ":" + StartOfComment.Substring(0, StartOfComment.LastIndexOf(']'));
-            }
-
-            //get string with robot groups and parse to robot groups list
-            SortedDictionary<int, RobotGroup> groupsDictionary = new SortedDictionary<int, RobotGroup>();
-
-            string groups = positionString.Substring(positionString.IndexOf("GP"));
-            groups = groups.Substring(0, groups.IndexOf("}"));
-
-            List<string> strGroups = new(groups.Split("\n   "));
-
-            RobotGroup robotGroup;
-            for (int i = 0; i < strGroups.Count; i++)
-            {
-                string groupString = strGroups[i];
-                
-                string strGroupNumber = groupString.Substring(groupString.IndexOf("GP"), groupString.IndexOf(":") - groupString.IndexOf("GP"));
-                int groupNumber = int.Parse(strGroupNumber.Substring(2));
-
-                if (groupNumber == 1)
-                {
-                    robotGroup = new RobotFirstGroup(groupNumber);
-                } else
-                {
-                    robotGroup = new RobotNotFirstGroup(groupNumber);
-                }
-                robotGroup.Parse(groupString);
-                groupsDictionary.Add(robotGroup.Number, robotGroup);
-            }
-            this._Number = positionNumber;
-            this._PositionComment = positionComment;
-            this._RobotGroupsList = groupsDictionary;
-        }
+        
         public override string ToString()
         {
             string robotGroups = "";
@@ -99,7 +52,7 @@ namespace fanuc_group_exchange_desktop.Model
             {
                 robotGroups += "   " + robotGroup.Value.ToString();
             }
-            return "\nP[" + _Number.ToString() + _PositionComment +  "]{\n" +  robotGroups + "\n};";
+            return "\nP[" + Number.ToString() + _PositionComment +  "]{\n" +  robotGroups + "\n};";
         }
     }
 }

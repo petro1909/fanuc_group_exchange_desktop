@@ -79,35 +79,6 @@ namespace fanuc_group_exchange_desktop.Model
             this.Coordinates = Coordinates;
         }
 
-        public override void Parse(string groupString)
-        {
-
-            string groupFrames = groupString.Substring(groupString.IndexOf("UF"));
-            groupFrames = groupFrames.Substring(0, groupFrames.IndexOf(","));
-            Regex groupFramesRegex = new Regex("\\d");
-            int UserFrame = int.Parse(groupFramesRegex.Match(groupFrames).Value);
-
-            string groupTools = groupString.Substring(groupString.IndexOf("UT"));
-            groupTools = groupTools.Substring(0, groupTools.IndexOf(","));
-            Regex groupToolRegex = new Regex("\\d");
-            int UserTool = int.Parse(groupToolRegex.Match(groupTools).Value);
-
-            string coordinatesString = groupString.Substring(groupString.IndexOf("J"));
-
-            List<string> coordinatesList = new List<string>(coordinatesString.Split(",	"));
-            List<Coordinate> Coordinates = new List<Coordinate>();
-
-            foreach (string coordinateString in coordinatesList)
-            {
-                Coordinate coordinate = new Coordinate();
-                coordinate.Parse(coordinateString);
-                Coordinates.Add(coordinate);
-            }
-            this.UserFrame = UserFrame;
-            this.UserTool = UserTool;
-            this.Coordinates = Coordinates;
-        }
-
         public override string ToString()
         {
             string coordinateString = "";
@@ -119,7 +90,7 @@ namespace fanuc_group_exchange_desktop.Model
                     coordinateString += ",";
             }
             return "\n" +
-            "   GP" + this._Number + ":\n" +
+            "   GP" + this.Number + ":\n" +
             "\tUF : " + _UserFrame + ", UT : " + _UserTool + ",\n" + coordinateString;
         }
     }

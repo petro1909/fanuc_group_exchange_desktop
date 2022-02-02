@@ -8,7 +8,5 @@ namespace fanuc_group_exchange_desktop.Model
 {
     public abstract class RobotGroup : BasicInstance
     {
-
-        public override abstract void Parse(string groupString);
     }
 }

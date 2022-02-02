@@ -9,90 +9,33 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ViewMVVM\resources\img\icons8-cancel-64.png" />
-    <None Remove="ViewMVVM\resources\img\icons8-minimize-32.png" />
-    <None Remove="ViewMVVM\resources\img\icons8-plus-24.png" />
-    <None Remove="ViewMVVM\resources\img\icons8-вычитание-50.png" />
-    <None Remove="ViewMVVM\resources\img\icons8-удалить-50.png" />
-    <None Remove="ViewMVVM\resources\img\icons8-удалить.svg" />
-    <None Remove="ViewMVVM\resources\img\icons8del32.png" />
-    <None Remove="ViewMVVM\resources\img\icons8maximize32.png" />
-    <None Remove="ViewMVVM\resources\img\plus.png" />
-    <None Remove="ViewMVVM\resources\img\pngfind.com-robot-icon-png-1400144.png" />
-    <None Remove="ViewMVVM\resources\img\remove.png" />
-    <None Remove="ViewMVVM\resources\img\squares.png" />
-    <None Remove="ViewMVVM\resources\img\x.png" />
-    <None Remove="View\resources\img\icons8-cancel-64.png" />
-    <None Remove="View\resources\img\icons8-minimize-32.png" />
-    <None Remove="View\resources\img\icons8-plus-24.png" />
-    <None Remove="View\resources\img\icons8-вычитание-50.png" />
-    <None Remove="View\resources\img\icons8-удалить-50.png" />
-    <None Remove="View\resources\img\icons8-удалить.svg" />
-    <None Remove="View\resources\img\icons8del32.png" />
-    <None Remove="View\resources\img\icons8maximize32.png" />
-    <None Remove="View\resources\img\plus.png" />
-    <None Remove="View\resources\img\pngfind.com-robot-icon-png-1400144.png" />
-    <None Remove="View\resources\img\remove.png" />
+    <None Remove="View\resources\img\add.png" />
+    <None Remove="View\resources\img\close.png" />
+    <None Remove="View\resources\img\delete.png" />
+    <None Remove="View\resources\img\maximize.png" />
+    <None Remove="View\resources\img\minimize.png" />
+    <None Remove="View\resources\img\normalize.png" />
+    <None Remove="View\resources\img\robot.png" />
     <None Remove="View\resources\img\squares.png" />
-    <None Remove="View\resources\img\x.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="ViewMVVM\resources\img\icons8-cancel-64.png" />
-    <Resource Include="ViewMVVM\resources\img\icons8-minimize-32.png" />
-    <Resource Include="ViewMVVM\resources\img\icons8-plus-24.png" />
-    <Resource Include="ViewMVVM\resources\img\icons8-вычитание-50.png" />
-    <Resource Include="ViewMVVM\resources\img\icons8-удалить-50.png" />
-    <Resource Include="ViewMVVM\resources\img\icons8-удалить.svg" />
-    <Resource Include="ViewMVVM\resources\img\icons8del32.png" />
-    <Resource Include="ViewMVVM\resources\img\icons8maximize32.png" />
-    <Resource Include="ViewMVVM\resources\img\plus.png" />
-    <Resource Include="ViewMVVM\resources\img\pngfind.com-robot-icon-png-1400144.png" />
-    <Resource Include="ViewMVVM\resources\img\remove.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="ViewMVVM\resources\img\squares.png" />
-    <Resource Include="ViewMVVM\resources\img\x.png" />
-    <Resource Include="View\resources\img\icons8-cancel-64.png" />
-    <Resource Include="View\resources\img\icons8-minimize-32.png" />
-    <Resource Include="View\resources\img\icons8-plus-24.png" />
-    <Resource Include="View\resources\img\icons8-вычитание-50.png" />
-    <Resource Include="View\resources\img\icons8maximize32.png" />
-    <Resource Include="View\resources\img\icons8del32.png" />
-    <Resource Include="View\resources\img\icons8-удалить-50.png" />
-    <Resource Include="View\resources\img\icons8-удалить.svg" />
-    <Resource Include="View\resources\img\plus.png" />
-    <Resource Include="View\resources\img\pngfind.com-robot-icon-png-1400144.png" />
-    <Resource Include="View\resources\img\remove.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="View\resources\img\normalize.png" />
+    <Resource Include="View\resources\img\add.png" />
+    <Resource Include="View\resources\img\minimize.png" />
+    <Resource Include="View\resources\img\delete.png" />
+    <Resource Include="View\resources\img\close.png" />
+    <Resource Include="View\resources\img\maximize.png" />
+    <Resource Include="View\resources\img\robot.png" />
     <Resource Include="View\resources\img\squares.png" />
-    <Resource Include="View\resources\img\x.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="ViewMVVM\CoordinatePanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="ViewMVVM\GroupPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="ViewMVVM\CoordinatePanel.xaml">
+    <Page Update="View\MainWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="ViewMVVM\GroupPanel.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="ViewMVVM\MainWindow.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="ViewMVVM\resources\dictionaries\DarkThemeWinDictionary.xaml">
+    <Page Update="View\resources\dictionaries\DarkThemeWinDictionary.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

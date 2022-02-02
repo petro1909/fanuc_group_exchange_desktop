@@ -9,14 +9,14 @@ using System.Windows.Input;
 using System.Windows;
 using fanuc_group_exchange_desktop.Model;
 using fanuc_group_exchange_desktop.Command;
+using fanuc_group_exchange_desktop.Services;
 
 namespace fanuc_group_exchange_desktop.ViewModel
 {
     public class ApplicationViewModel : BaseViewModel
     {
         public FileWorker fileWorker;
-
-        public ApplicationViewModel() 
+        public ApplicationViewModel(Window window) 
         {
             fileWorker = new FileWorker();
             AddingGroupViewModels = new ObservableCollection<GroupViewModel>
@@ -87,7 +87,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                         filePath = dialog.FileName;
 
                         fileWorker.ReadFromFile(filePath);
-                        ProgramText = fileWorker.combineFileParts();
+                        ProgramText = fileWorker.CombineFileParts();
 
 
                         List<string> groupList = fileWorker.UsedGroupsList;
@@ -97,7 +97,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                         {
                             if(groupList[i] == "1")
                             {
-                                UsedGroupViewModels.Add(new UsedGroupViewModel(i + 1,this));
+                                UsedGroupViewModels.Add(new UsedGroupViewModel(i+1,this));
                             }
                         }
                     }));
@@ -113,7 +113,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                     (_SaveFileCommand = new RelayCommand(obj => {
                         if (string.IsNullOrEmpty(_ProgramText)) return;
 
-                        string file = fileWorker.combineFileParts();
+                        string file = fileWorker.CombineFileParts();
                         fileWorker.WriteToFile(filePath, file);
                     }));
             }
@@ -137,7 +137,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                         string fileName = dialog.SafeFileName;
                         fileWorker.FileName = fileName.Substring(0, fileName.LastIndexOf("."));
 
-                        string file = fileWorker.combineFileParts();
+                        string file = fileWorker.CombineFileParts();
                         fileWorker.WriteToFile(dialog.FileName, file);
                     }));
             }
@@ -154,9 +154,9 @@ namespace fanuc_group_exchange_desktop.ViewModel
                     (_DeleteSelectedUsedGroupCommand = new RelayCommand(obj =>
                     {
                         UsedGroupViewModel usedGroup = obj as UsedGroupViewModel;
-                        fileWorker.deleteGroup(usedGroup.UsedGroupNumber);
+                        fileWorker.DeleteGroup(usedGroup.UsedGroupNumber);
                         UsedGroupViewModels.Remove(usedGroup);
-                        ProgramText = fileWorker.combineFileParts();
+                        ProgramText = fileWorker.CombineFileParts();
                     }));
             }
         }
@@ -219,9 +219,42 @@ namespace fanuc_group_exchange_desktop.ViewModel
                                 robotNotFirstGroup.Coordinates = coordinates;
                                 
                                 groups.Add(robotNotFirstGroup);
+
+                                
+                                
+                                UsedGroupViewModel usedGroupViewModel = new UsedGroupViewModel(robotNotFirstGroup.Number, this);
+                                bool isContain = false;
+                                foreach (UsedGroupViewModel usedGroup in UsedGroupViewModels)
+                                {
+                                    if (usedGroup.UsedGroupNumber == usedGroupViewModel.UsedGroupNumber)
+                                    {
+                                        isContain = true;
+                                        break;
+                                    }
+                                }
+                                if (isContain == false)
+                                {
+                                    if (usedGroupViewModel.UsedGroupNumber < UsedGroupViewModels[UsedGroupViewModels.Count - 1].UsedGroupNumber)
+                                    {
+                                        for (int i = 0; i < UsedGroupViewModels.Count; i++)
+                                        {
+                                            if (UsedGroupViewModels[i].UsedGroupNumber > usedGroupViewModel.UsedGroupNumber)
+                                            {
+                                                UsedGroupViewModels.Insert(i, usedGroupViewModel);
+                                                break;
+                                            }
+                                        }
+                                    } else
+                                    {
+                                        UsedGroupViewModels.Add(usedGroupViewModel);
+                                    }
+                                }
+
+                                
                             }
-                            fileWorker.setFanucLSFilePositions(groups);
-                            ProgramText = fileWorker.combineFileParts();
+                            fileWorker.SetFanucLSFilePositions(groups);
+
+                            ProgramText = fileWorker.CombineFileParts();
                         }
                     }));
             }

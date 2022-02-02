@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using fanuc_group_exchange_desktop.Model;
 using fanuc_group_exchange_desktop.Command;
+using System.Collections.ObjectModel;
 
 namespace fanuc_group_exchange_desktop.ViewModel
 {
@@ -14,7 +15,8 @@ namespace fanuc_group_exchange_desktop.ViewModel
         private GroupViewModel groupViewModel;
 
 
-        public CoordinateViewModel() { }
+        public CoordinateViewModel() { 
+        }
 
         public CoordinateViewModel(Coordinate coordinate, GroupViewModel groupViewModel)
         {
@@ -52,6 +54,21 @@ namespace fanuc_group_exchange_desktop.ViewModel
             get
             {
                 return Coordinate.CoordinateUnit;
+            }
+        }
+
+        private ObservableCollection<string> _Units;
+
+        public ObservableCollection<string> Units
+        {
+            set
+            {
+                _Units = value;
+                OnPropertyChanged("Units");
+            }
+            get
+            {
+                return new ObservableCollection<string> { "mm", "deg" };
             }
         }
 

@@ -15,7 +15,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using fanuc_group_exchange_desktop.Model;
+using fanuc_group_exchange_desktop.ViewModel;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace fanuc_group_exchange_desktop.View
 {
@@ -24,215 +28,30 @@ namespace fanuc_group_exchange_desktop.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        string filePath = "";
-        bool isFullScreen = false;
-        double height;
-        double width;
-        double left;
-        double top;
+        bool isFullScreen;
 
-
-        FileWorker fileWorker;
-        GroupManipulator groupManipulator;
 
         public MainWindow()
         {
-            fileWorker = new FileWorker();
-            groupManipulator = new GroupManipulator();
-
             InitializeComponent();
-            height = this.Height;
-            width = this.Width;
-            left = this.Left;
-            top = this.Top;
-
-
-
-            Groups.Items.Add(new GroupPanel());
-
-            FileCode.Text = null;
+            DataContext = new ApplicationViewModel(this);
         }
 
-        private void GetFileCode(object sender, RoutedEventArgs e)
+        private void GroupNumber_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            FileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() == DialogResult.HasValue) return;
-
-            filePath = dialog.FileName;
-            UsedGroups.Children.Clear();
-
-            fileWorker.ReadFromFile(filePath);
-            FileCode.Text = fileWorker.combineFileParts();
-
-            ShowUsedProgramGroups();
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
-
-        private void ShowUsedProgramGroups()
-        {
-            List<string> groupList = fileWorker.UsedGroupsList;
-            UsedGroups.Children.Clear();
-            for (int i = 0; i < groupList.Count; i++)
-            {
-                if (groupList[i] == "1")
-                {
-                    StackPanel stackPanel = new StackPanel()
-                    {
-                        Orientation = Orientation.Horizontal
-                    };
-                    TextBlock groupNumber = new TextBlock()
-                    {
-                        Height = 25,
-                        Text = "Group" + (i + 1).ToString(),
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Foreground = new SolidColorBrush(Colors.White)
-                    };
-                    Button delete = new Button
-                    {
-                        Tag = (i + 1).ToString(),
-                        Height = 25,
-                        Content = "delete",
-                        VerticalAlignment = VerticalAlignment.Top
-                    };
-                    delete.Click += DeleteGroup;
-                    stackPanel.Children.Add(groupNumber);
-                    stackPanel.Children.Add(delete);
-                    UsedGroups.Children.Add(stackPanel);
-                }
-            }
-        }
-
-        public void DeleteGroup(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            int groupNumber = int.Parse(button.Tag.ToString());
-            fileWorker.deleteGroup(groupNumber);
-            FileCode.Text = fileWorker.combineFileParts();
-            StackPanel stack = button.Parent as StackPanel;
-            UsedGroups.Children.Remove(stack);
-
-
-        }
-
-
-        public void SaveFile(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(FileCode.Text)) return;
-
-            string file = fileWorker.combineFileParts();
-            fileWorker.WriteToFile(filePath, file);
-        }
-
-        public void SaveFileAs(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(FileCode.Text)) return;
-
-
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "Файлы программ (*.LS)|*.ls";
-            if (dialog.ShowDialog() == DialogResult.HasValue) return;
-
-            string fileName = dialog.SafeFileName;
-            fileWorker.FileName = fileName.Substring(0, fileName.LastIndexOf("."));
-
-            string file = fileWorker.combineFileParts();
-            fileWorker.WriteToFile(dialog.FileName, file);
-        }
-
-
-        public void SaveGroup_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(FileCode.Text)) return;
-            if (AddGroupsToPositions() == default) return;
-            ShowUsedProgramGroups();
-            FileCode.Text = fileWorker.combineFileParts();
-
-        }
-
-
-        public int AddGroupsToPositions()
-        {
-            if (string.IsNullOrEmpty(FileCode.Text)) return default;
-            List<RobotGroup> robotGroups = GetGroupsList();
-            if (robotGroups != null)
-            {
-                fileWorker.setFanucLSFilePositions(robotGroups);
-                return 1;
-            }
-            return default;
-        }
-
-        public List<RobotGroup> GetGroupsList()
-        {
-            List<RobotGroup> robotGroups = new List<RobotGroup>();
-            int groupsCount = Groups.Items.Count;
-            if (groupsCount == 0) return default;
-
-            try
-            {
-                for (int i = 0; i < groupsCount; i++)
-                {
-                    GroupPanel groupPanel = (GroupPanel)Groups.Items[i];
-
-                    //get group elements
-                    string groupNumberStr = groupPanel.GroupNumber.Text;
-                    ListBox groupCoordinates = groupPanel.GroupsCoordinates;
-
-
-                    int groupNumber = int.Parse(groupNumberStr);
-                    int groupUserFrame = int.Parse(groupPanel.UserFrame.Text);
-                    int groupUserTool = int.Parse(groupPanel.UserTool.Text);
-
-                    List<Coordinate> coordinates = new List<Coordinate>();
-
-                    ItemCollection positionsStackPanel = groupCoordinates.Items;
-
-                    for (int j = 0; j < positionsStackPanel.Count; j++)
-                    {
-                        //get coorinate elements
-                        CoordinatePanel coordinatePanel = (CoordinatePanel)positionsStackPanel[j];
-
-                        int coordinateNumber = j + 1;
-
-                        string coordinatePositionString = coordinatePanel.GroupPosition.Text;
-
-                        IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
-                        double coordinatePosition = double.Parse(coordinatePositionString, formatter);
-
-                        string unit = coordinatePanel.Units.Text;
-
-                        coordinates.Add(new Coordinate(coordinateNumber, coordinatePosition, unit));
-                    }
-
-                    RobotGroup robotGroup = new RobotNotFirstGroup(groupNumber, groupUserFrame, groupUserTool, coordinates);
-                    robotGroups.Add(robotGroup);
-                }
-                return robotGroups;
-            }
-            catch (Exception e)
-            {
-                MessageBoxResult messageBox =  MessageBox.Show("FSEF" + e.Message);
-                return default;
-            }
-
-        }
-        private void AddGroupPanel(object sender, RoutedEventArgs e)
-        {
-            Groups.Items.Add(new GroupPanel());
-        }
-
-
-
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //WinParameters.Drag(Application.Current.MainWindow , isFullScreen);
-                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\icons8maximize32.png", UriKind.Relative));
+                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\maximize.png", UriKind.Relative));
                 this.DragMove();
             }
         }
-
 
         private void MinimizeWindowClick(object sender, RoutedEventArgs e)
         {
@@ -246,13 +65,13 @@ namespace fanuc_group_exchange_desktop.View
             {
                 WinParameters.ChangeSize(Application.Current.MainWindow, isFullScreen);
                 isFullScreen = false;
-                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\icons8maximize32.png", UriKind.Relative));
+                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\maximize.png", UriKind.Relative));
             }
             else
             {
                 WinParameters.ChangeSize(Application.Current.MainWindow, isFullScreen);
                 isFullScreen = true;
-                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\icons8-minimize-32.png", UriKind.Relative));
+                ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\normalize.png", UriKind.Relative));
             }
         }
 

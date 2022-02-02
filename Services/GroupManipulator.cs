@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using fanuc_group_exchange_desktop.Model;
 using System.Text.RegularExpressions;
 using System.Collections;
+using fanuc_group_exchange_desktop.Parser;
 
-namespace fanuc_group_exchange_desktop
+namespace fanuc_group_exchange_desktop.Services
 {
     public class GroupManipulator
     {
@@ -38,8 +39,8 @@ namespace fanuc_group_exchange_desktop
             
                 foreach (string positionString in positionStringList)
                 {
-                    RobotPosition robotPosition = new RobotPosition();
-                    robotPosition.Parse(positionString);
+                    PositionParser positionParser = new PositionParser();
+                    RobotPosition robotPosition = positionParser.Parse(positionString) as RobotPosition;
                     positionList.Add(robotPosition);
                 }
                 return positionList;

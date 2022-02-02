@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace fanuc_group_exchange_desktop
+namespace fanuc_group_exchange_desktop.Services
 {
     public class FileWorker
     {
@@ -51,10 +51,10 @@ namespace fanuc_group_exchange_desktop
         {
             string fileStrings = File.ReadAllText(filePath);
 
-            getFanucLSFileName(fileStrings);
-            getFanucLSFileHeader(fileStrings);
-            getFanucLSFileMain(fileStrings);
-            getFanucLSFilePositions(fileStrings);
+            GetFanucLSFileName(fileStrings);
+            GetFanucLSFileHeader(fileStrings);
+            GetFanucLSFileMain(fileStrings);
+            GetFanucLSFilePositions(fileStrings);
 
             return fileStrings;
         }
@@ -75,20 +75,20 @@ namespace fanuc_group_exchange_desktop
             return FileName;
         }
 
-        public void getFanucLSFileName(string code)
+        private void GetFanucLSFileName(string code)
         {
             string fileName = code.Substring(0, code.IndexOf("/ATTR"));
             FileName = fileName.Substring(7);
         }
 
-        public string setFanucLSFileNameLine()
+        private string SetFanucLSFileNameLine()
         {
             return "/PROG  " + _FileName.ToUpper();
         }
 
 
         //header
-        public void getFanucLSFileHeader(string code)
+        private void GetFanucLSFileHeader(string code)
         {
             string header = code.Substring(0, code.IndexOf("/MN"));
             Header = header.Substring(header.IndexOf("/ATTR"));
@@ -96,7 +96,7 @@ namespace fanuc_group_exchange_desktop
         }
 
 
-        public string setFanucLSFileUsedGroupsLine()
+        private string SetFanucLSFileUsedGroupsLine()
         {
             string usedGroupString = "";
             for (int i = 0; i < UsedGroupsList.Count; i++)
@@ -107,38 +107,38 @@ namespace fanuc_group_exchange_desktop
             return "DEFAULT_GROUP\t= " + usedGroupString + ";\n";
         }
 
-        public string setFanucLSFileHeaderBlock()
+        private string SetFanucLSFileHeaderBlock()
         {
             string headerBegin = _Header.Substring(0, _Header.IndexOf("DEFAULT_GROUP"));
             string headerEnd = _Header.Substring(_Header.IndexOf("CONTROL_CODE"));
-            string groups = setFanucLSFileUsedGroupsLine();
+            string groups = SetFanucLSFileUsedGroupsLine();
 
             return headerBegin + groups + headerEnd;
         }
 
         //main
-        private void getFanucLSFileMain(string code)
+        private void GetFanucLSFileMain(string code)
         {
             string mainWithPositions = code.Substring(code.IndexOf("/MN"));
             Main = mainWithPositions.Substring(0, mainWithPositions.IndexOf("/POS"));
             
         }
 
-        private string setFanucLSFileMainBlock()
+        private string SetFanucLSFileMainBlock()
         {
             return _Main;
         }
 
 
         //positions
-        private void getFanucLSFilePositions(string fileCode)
+        private void GetFanucLSFilePositions(string fileCode)
         {
             string positions = fileCode.Substring(fileCode.IndexOf("/POS")+4);
             Positions = positions.Substring(0, positions.LastIndexOf(";")+1);
         }
 
 
-        public void setFanucLSFilePositions(List<RobotGroup> groupList)
+        public void SetFanucLSFilePositions(List<RobotGroup> groupList)
         {
 
             UsedGroupsList = GroupManipulator.GetListOfUsedGroupsInHeader(_UsedGroupsList, groupList);
@@ -152,7 +152,7 @@ namespace fanuc_group_exchange_desktop
             }
         }
 
-        public void deleteGroup(int groupNumber)
+        public void DeleteGroup(int groupNumber)
         {
             GroupManipulator.DeleteGroupInHeader(_UsedGroupsList, groupNumber);
             
@@ -167,17 +167,18 @@ namespace fanuc_group_exchange_desktop
 
 
 
-        public string setFanucLSFilePositionsBlock()
+        private string SetFanucLSFilePositionsBlock()
         {
             return "/POS" + _Positions;
         }
 
-        public string combineFileParts()
+        public string CombineFileParts()
         {
             try
             {
-                return setFanucLSFileNameLine() + setFanucLSFileHeaderBlock() + setFanucLSFileMainBlock() + setFanucLSFilePositionsBlock() + _EndOfFile;
-            } catch(Exception e)
+                return SetFanucLSFileNameLine() + SetFanucLSFileHeaderBlock() + SetFanucLSFileMainBlock() + SetFanucLSFilePositionsBlock() + _EndOfFile;
+            }
+            catch (Exception e)
             {
                 return e.Message + "";
             }

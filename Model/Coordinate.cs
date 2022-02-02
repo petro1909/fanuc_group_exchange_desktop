@@ -40,28 +40,9 @@ namespace fanuc_group_exchange_desktop.Model
             this.CoordinateUnit = CoordinateUnit;
         }
 
-
-        public override void Parse(string coordinateString)
-        {
-            Regex counterRegex = new Regex("J\\d+");
-            string coordinateCounterString = counterRegex.Match(coordinateString).Value;
-            int CoordinateNumber = int.Parse(coordinateCounterString.Substring(1));
-
-            Regex coordinateNumberRegex = new Regex("\\-*\\d*\\.{1}\\d+");
-            IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
-            double CoordinatePosition = double.Parse(coordinateNumberRegex.Match(coordinateString).Value, formatter);
-
-            Regex unitRegex = new Regex("mm|deg");
-            string CoordinateUnit = unitRegex.Match(coordinateString).Value;
-
-            this.Number = CoordinateNumber;
-            this.CoordinatePosition = CoordinatePosition;
-            this.CoordinateUnit = CoordinateUnit;
-        }
-
         public override string ToString()
         {
-            string coordinateNumberString = "J" + _Number.ToString();
+            string coordinateNumberString = "J" + Number.ToString();
 
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
             string coordinatePositionString1 = String.Format(formatter, "{0:0.000}", _CoordinatePosition);
