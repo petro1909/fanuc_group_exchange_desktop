@@ -25,6 +25,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
             this.robotGroup = robotGroup;
             Coordinates = new ObservableCollection<CoordinateViewModel>()
             {
+
                 new CoordinateViewModel(new Coordinate(1), this)
             };
         }
@@ -74,10 +75,12 @@ namespace fanuc_group_exchange_desktop.ViewModel
             set
             {
                 _Coordinates = value;
+               
+                
                 OnPropertyChanged("RobotCoordiantes");
             }
             get
-            {
+            {   
                 return _Coordinates;
             }
         }
@@ -131,6 +134,27 @@ namespace fanuc_group_exchange_desktop.ViewModel
                     }));
             }
         }
+
+        private RelayCommand _SaveCoordinateBlockCommand;
+
+        public RelayCommand SaveCoordinateBlockCommand
+        {
+            get
+            {
+                return _SaveCoordinateBlockCommand ??
+                    (_SaveCoordinateBlockCommand = new RelayCommand(obj =>
+                    {
+                        List<Coordinate> coordinates = new List<Coordinate>();
+                        foreach (CoordinateViewModel coord in Coordinates)
+                        {
+                            coordinates.Add(coord.Coordinate);
+                        }
+
+                        robotGroup.Coordinates = coordinates;
+                    }));
+            }
+        }
+
 
 
 

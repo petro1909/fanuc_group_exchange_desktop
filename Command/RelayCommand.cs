@@ -33,6 +33,7 @@ namespace fanuc_group_exchange_desktop.Command
         {
             this.execute(parameter);
         }
+
     }
 }
 

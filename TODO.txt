@@ -1,4 +1,1 @@
-﻿--Add custom window methods to hove the window
---Add some instructions
---Add multithreading
---Add tests
+﻿

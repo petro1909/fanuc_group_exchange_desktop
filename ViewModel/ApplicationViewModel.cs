@@ -16,16 +16,6 @@ namespace fanuc_group_exchange_desktop.ViewModel
     public class ApplicationViewModel : BaseViewModel
     {
         public FileWorker fileWorker;
-        public ApplicationViewModel(Window window) 
-        {
-            fileWorker = new FileWorker();
-            AddingGroupViewModels = new ObservableCollection<GroupViewModel>
-            {
-                new GroupViewModel(new RobotNotFirstGroup(0,1), this)
-            };
-        }
-
-
         private string filePath;
 
         private string _ProgramText;
@@ -73,6 +63,18 @@ namespace fanuc_group_exchange_desktop.ViewModel
             }
         }
 
+
+        public ApplicationViewModel(Window window)
+        {
+            fileWorker = new FileWorker();
+            ProgramText = App.placeholderText;
+            AddingGroupViewModels = new ObservableCollection<GroupViewModel>
+            {
+                new GroupViewModel(new RobotNotFirstGroup(0,1), this)
+            };
+        }
+
+
         private RelayCommand _GetFileCodeCommand;
         public RelayCommand GetFileCodeCommand
         {
@@ -111,7 +113,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
             {
                 return _SaveFileCommand ??
                     (_SaveFileCommand = new RelayCommand(obj => {
-                        if (string.IsNullOrEmpty(_ProgramText)) return;
+                        if (_ProgramText ==  App.placeholderText) return;
 
                         string file = fileWorker.CombineFileParts();
                         fileWorker.WriteToFile(filePath, file);
@@ -127,7 +129,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return _SaveFileAsCommand ??
                     (_SaveFileAsCommand = new RelayCommand(obj =>
                     {
-                        if (string.IsNullOrEmpty(_ProgramText)) return;
+                        if (_ProgramText == App.placeholderText) return;
 
 
                         SaveFileDialog dialog = new SaveFileDialog();
@@ -203,26 +205,26 @@ namespace fanuc_group_exchange_desktop.ViewModel
                     {
                         if (SaveAddedGroupsCommand != null)
                         {
-                            if (string.IsNullOrEmpty(_ProgramText)) return;
+                            if (_ProgramText == App.placeholderText) return;
 
                             List<RobotGroup> groups = new List<RobotGroup>();
+                            
                             foreach(GroupViewModel groupViewModel in AddingGroupViewModels)
                             {
+
+                                if (groupViewModel.GroupNumber == 0 || groupViewModel.GroupNumber == 1)
+                                {
+                                    MessageBox.Show("You can't add or change this group : " + groupViewModel.GroupNumber.ToString());
+                                    return;
+                                }
+                                groupViewModel.SaveCoordinateBlockCommand.Execute(null);
                                 RobotNotFirstGroup robotNotFirstGroup = groupViewModel.robotGroup;
 
-                                List<Coordinate> coordinates = new List<Coordinate>(); 
-                                foreach(CoordinateViewModel coord in groupViewModel.Coordinates)
-                                {
-                                    coordinates.Add(coord.Coordinate);
-                                }
 
-                                robotNotFirstGroup.Coordinates = coordinates;
-                                
                                 groups.Add(robotNotFirstGroup);
-
-                                
                                 
                                 UsedGroupViewModel usedGroupViewModel = new UsedGroupViewModel(robotNotFirstGroup.Number, this);
+                                
                                 bool isContain = false;
                                 foreach (UsedGroupViewModel usedGroup in UsedGroupViewModels)
                                 {

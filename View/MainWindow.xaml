@@ -9,8 +9,13 @@
         Title="Fanuc Group Exchanger" 
         WindowStyle="None" 
         AllowsTransparency="True"
-        MinWidth="975">
-    
+        MinWidth="980" MinHeight="500">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="25"
+                      GlassFrameThickness="2"
+                      />
+    </WindowChrome.WindowChrome>
     
     
     <Window.Resources>
@@ -28,7 +33,6 @@
     </Window.Resources>
 
     <Grid x:Name="MainGrid" Background="{StaticResource DarkThemeBackgroundBrush}">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="1*"/>
@@ -37,33 +41,29 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50*" MinWidth="450"></ColumnDefinition>
-            <ColumnDefinition Width="45*" MinWidth="510"></ColumnDefinition>
+            <ColumnDefinition Width="45*" MinWidth="515"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="#FF3C3C3C">
+            <DockPanel WindowChrome.IsHitTestVisibleInChrome="True">
+                <StackPanel DockPanel.Dock="Left"  Orientation="Horizontal" Margin="5 0 0 0">
+                    <Image Source="resources/img/robot.png" Width="18" Height="18" ></Image>
+                    <TextBlock Text="Fanuc Group Exchanger"></TextBlock>
+                </StackPanel>
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  Background="#FF3C3C3C">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel  Grid.Column="0" Orientation="Horizontal" Margin="5 0 0 0">
-                <Image Source="resources/img/robot.png" Width="18" Height="18" ></Image>
-                <TextBlock Text="Fanuc Group Exchanger"></TextBlock>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal"  HorizontalAlignment="Right">
-                <Button x:Name="MinimizeWindow" Click="MinimizeWindowClick" >
-                    <Image Source="resources/img/minimize.png" ></Image>
-                </Button>
-                <Button x:Name="ChangeSinzeOfWindow" Click="ChangeSinzeOfWindowClick">
-                    <Image x:Name="ChangeSinzeOfWindowImage" Source="resources/img/maximize.png"></Image>
-                </Button>
-                <Button x:Name="CloseeWindow"   Click="CloseWindowClick">
-                    <Image Source="resources/img/close.png"></Image>
-                </Button>
-            </StackPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"  HorizontalAlignment="Right">
+                    <Button x:Name="MinimizeButton" Click="MinimizeClick" >
+                        <Image Source="resources/img/minimize.png" ></Image>
+                    </Button>
+                    <Button x:Name="MaximizeButton" Click="MaximizeClick">
+                        <Image x:Name="ChangeSinzeOfWindowImage" Source="resources/img/maximize.png"></Image>
+                    </Button>
+                    <Button x:Name="CloseButton" Click="CloseClick">
+                        <Image Source="resources/img/close.png"></Image>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
         </Grid>
-
 
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
@@ -77,17 +77,25 @@
 
         <Grid x:Name="GroupInforamtion" Grid.Row="1" Grid.Column="1" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*"></RowDefinition>
-                <RowDefinition Height="70*"></RowDefinition>
+                <RowDefinition Height="25*"></RowDefinition>
+                <RowDefinition Height="80*"></RowDefinition>
             </Grid.RowDefinitions>
 
             <StackPanel x:Name="UsedGroups" Grid.Row="0" MinHeight="100">
-                <TextBlock Style="{StaticResource ControlStyle}" Text="Used Groups" HorizontalAlignment="Center" FontSize="25"></TextBlock>
-                <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                <TextBlock Style="{StaticResource ControlStyle}" Text="List of used groups in choosen program" HorizontalAlignment="Center" FontSize="20"></TextBlock>
+                <WrapPanel VerticalAlignment="Top" Orientation="Horizontal" Margin="6,0,0,0">
+                    <d:StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource ControlStyle}" Text="{Binding StringFormat=Group {0}, Path=UsedGroupNumber}" d:Text="Group 1"></TextBlock>
+                        <Button Grid.Row="0" Grid.Column="1" Command="{Binding DeleteUsedGroup}"  Margin="3 0 3 0" Width="23" Height="23" >
+                            <Button.BorderThickness>0</Button.BorderThickness>
+                            <Image Source="resources/img/delete.png"/>
+                        </Button>
+                        <Border BorderThickness="0.5" BorderBrush="#FFDCDCDC"></Border>
+                    </d:StackPanel>
                     <ItemsControl ItemsSource="{Binding UsedGroupViewModels}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
+                                <WrapPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
@@ -103,7 +111,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </StackPanel>
+                </WrapPanel>
             </StackPanel>
 
 
@@ -115,8 +123,12 @@
                             <ColumnDefinition Width="20*"></ColumnDefinition>
                             <ColumnDefinition Width="80*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1"/>
+                        </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,26.2,0,0">
                             <Label Style="{StaticResource ControlStyle}" Target="{Binding ElementName=GroupNumber}" HorizontalAlignment="Center" Content="Group &#xD;&#xA;Number"/>
                             <TextBox x:Name="GroupNumber"  Style="{StaticResource TextBoxStyle}" Text="{Binding Path=GroupNumber}" d:Text="2"></TextBox>
                         </StackPanel>
@@ -133,20 +145,20 @@
                                 <RowDefinition Height="40"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlStyle}">Position</TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlStyle}" Text="List of coordinates"/>
                             <Button Grid.Row="0" Grid.Column="1" x:Name="delete_group_1" Command="{Binding DeleteGroupBlockCommand}"  Margin="3 0 0 0" Width="23" Height="23" >
                                 <Button.BorderThickness>0</Button.BorderThickness>
                                 <Image Source="resources/img/delete.png"/>
                             </Button>
 
-                            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Background="#FF1E1E1E">
+                            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Background="#FF1E1E1E">
                                 <TextBlock Style="{StaticResource ControlStyle}">UF :</TextBlock>
                                 <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserFrame" Width="50"  Text="{Binding Path=GroupFrame}"></TextBox>
                                 <TextBlock Style="{StaticResource ControlStyle}">UT :</TextBlock>
                                 <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserTool" Width="50"  Text="{Binding Path=GroupTool}"></TextBox>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="2" Background="#FF1E1E1E" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
+                            <StackPanel Grid.Row="2" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
                                 <d:StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
                                     <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="{Binding StringFormat=J{0}\=, Path=CoordinateNumber}"></TextBlock>
                                     <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
@@ -191,7 +203,7 @@
                                 </ItemsControl>
                             </StackPanel>
 
-                            <Button Grid.Row="3" x:Name="addCoordinate" Command="{Binding AddCoordinateBlockCommand}" Width="25" Height="25" HorizontalAlignment="Left" Margin="0 0 9 0"> 
+                            <Button Grid.Row="3" x:Name="addCoordinate" Command="{Binding AddCoordinateBlockCommand}" Width="25" Height="25" HorizontalAlignment="Left" Margin="0 0 9 0">
                                 <Button.BorderThickness>0</Button.BorderThickness>
                                 <Image Source="resources/img/delete.png"  HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Image.RenderTransform>
@@ -199,8 +211,12 @@
                                     </Image.RenderTransform>
                                 </Image>
                             </Button>
-
                         </Grid>
+                        <Border Grid.Row="1" Grid.ColumnSpan="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
+                            </Border.Background>
+                        </Border>
                     </d:Grid>
 
 
@@ -212,8 +228,12 @@
                                         <ColumnDefinition Width="20*"></ColumnDefinition>
                                         <ColumnDefinition Width="80*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="1"/>
+                                    </Grid.RowDefinitions>
 
-                                    <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,26.2,0,0">
                                         <Label Style="{StaticResource ControlStyle}" Target="{Binding ElementName=GroupNumber}" HorizontalAlignment="Center" Content="Group &#xD;&#xA;Number"/>
                                         <TextBox x:Name="GroupNumber"  Style="{StaticResource TextBoxStyle}" Text="{Binding Path=GroupNumber}" d:Text="2"></TextBox>
                                     </StackPanel>
@@ -230,20 +250,20 @@
                                             <RowDefinition Height="40"/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlStyle}">Position</TextBlock>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlStyle}" Text="List of coordinates"/>
                                         <Button Grid.Row="0" Grid.Column="1" x:Name="delete_group_1" Command="{Binding DeleteGroupBlockCommand}"  Margin="3 0 0 0" Width="23" Height="23" >
                                             <Button.BorderThickness>0</Button.BorderThickness>
                                             <Image Source="resources/img/delete.png"/>
                                         </Button>
 
-                                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Background="#FF1E1E1E">
+                                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Background="#FF1E1E1E">
                                             <TextBlock Style="{StaticResource ControlStyle}">UF :</TextBlock>
                                             <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserFrame" Width="50"  Text="{Binding Path=GroupFrame}"></TextBox>
                                             <TextBlock Style="{StaticResource ControlStyle}">UT :</TextBlock>
                                             <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserTool" Width="50"  Text="{Binding Path=GroupTool}"></TextBox>
                                         </StackPanel>
 
-                                        <StackPanel Grid.Row="2" Background="#FF1E1E1E" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
+                                        <StackPanel Grid.Row="2" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
                                             <ItemsControl ItemsSource="{Binding Coordinates}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
@@ -271,6 +291,11 @@
                                             </Image>
                                         </Button>
                                     </Grid>
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
+                                        </Border.Background>
+                                    </Border>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

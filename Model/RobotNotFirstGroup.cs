@@ -87,7 +87,10 @@ namespace fanuc_group_exchange_desktop.Model
             {
                 coordinateString += Coordinates[i].ToString();
                 if (_Coordinates[i].Number != Coordinates.Count)
+                {
                     coordinateString += ",";
+                    if (_Coordinates[i].Number % 3 == 0) coordinateString += "\n";
+                }
             }
             return "\n" +
             "   GP" + this.Number + ":\n" +
