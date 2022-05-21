@@ -10,49 +10,39 @@ namespace fanuc_group_exchange_desktop.Model
 {
     public class Coordinate : BasicInstance
     {
-        private double _CoordinatePosition;
-        private string _CoordinateUnit;
+        public string CoordinateName { set; get; }
+        public double CoordinatePosition { set; get; }
+        public string CoordinateUnit { set; get; }
 
-
-        public double CoordinatePosition
-        {
-            set { _CoordinatePosition = value; }
-            get { return _CoordinatePosition; }
-        }
-
-        public string CoordinateUnit
-        {
-            set { _CoordinateUnit = value; }
-            get { return _CoordinateUnit; }
-        }
 
         public Coordinate() { }
 
-        public Coordinate(int Number)
+        public Coordinate(string CoordinateName)
         {
-            this.Number = Number; 
+            this.CoordinateName = CoordinateName;
         }
 
-        public Coordinate(int CoordinateNumber, double CoordinatePosition, string CoordinateUnit)
+        public Coordinate(string CoordinateName, double CoordinatePosition, string CoordinateUnit)
         {
-            this.Number = CoordinateNumber;
+            this.CoordinateName = CoordinateName;
             this.CoordinatePosition = CoordinatePosition;
             this.CoordinateUnit = CoordinateUnit;
         }
 
         public override string ToString()
         {
-            string coordinateNumberString = "J" + Number.ToString();
-
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
-            string coordinatePositionString1 = String.Format(formatter, "{0:0.000}", _CoordinatePosition);
-            string coordinatePositionString = "          " + coordinatePositionString1;
-            coordinatePositionString = coordinatePositionString.Substring(coordinatePositionString1.Length);
+            string coordinatePositionString = string.Format(formatter, "{0:0.000}", CoordinatePosition);
 
-            string coordinateUnitString = "    " + _CoordinateUnit.ToString();
-            coordinateUnitString = coordinateUnitString.Substring(_CoordinateUnit.Length);
+            int whitespacesCount = 10 - coordinatePositionString.Length;
+            string whitespaceString = new(' ', whitespacesCount);
 
-            return "\t" + coordinateNumberString + "=" + coordinatePositionString + coordinateUnitString;
+
+            string coordinateUnitString;
+            if (CoordinateUnit.Equals("mm")) coordinateUnitString = $" {CoordinateUnit}";
+            else coordinateUnitString = $"{CoordinateUnit}";
+
+            return $"\t{CoordinateName}{whitespaceString}{coordinatePositionString} {coordinateUnitString}";
         }
     }
 }

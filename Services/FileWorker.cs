@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace fanuc_group_exchange_desktop.Services
 {
@@ -49,6 +50,7 @@ namespace fanuc_group_exchange_desktop.Services
 
         public string ReadFromFile(string filePath)
         {
+            StringBuilder builder = new StringBuilder(File.ReadAllText(filePath));
             string fileStrings = File.ReadAllText(filePath);
 
             GetFanucLSFileName(fileStrings);
@@ -172,15 +174,16 @@ namespace fanuc_group_exchange_desktop.Services
             return "/POS" + _Positions;
         }
 
-        public string CombineFileParts()
+        public StringBuilder CombineFileParts()
         {
             try
             {
-                return SetFanucLSFileNameLine() + SetFanucLSFileHeaderBlock() + SetFanucLSFileMainBlock() + SetFanucLSFilePositionsBlock() + _EndOfFile;
+
+                return new StringBuilder(SetFanucLSFileNameLine() + SetFanucLSFileHeaderBlock() + SetFanucLSFileMainBlock() + SetFanucLSFilePositionsBlock() + _EndOfFile);
             }
             catch (Exception e)
             {
-                return e.Message + "";
+                return new StringBuilder(e.Message + "");
             }
         }
     }

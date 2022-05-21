@@ -13,9 +13,8 @@ namespace fanuc_group_exchange_desktop.Parser
     {
         public override BasicInstance Parse(string coordinateString)
         {
-            Regex counterRegex = new Regex("J\\d+");
-            string coordinateCounterString = counterRegex.Match(coordinateString).Value;
-            int CoordinateNumber = int.Parse(coordinateCounterString.Substring(1));
+            int equalIndex = coordinateString.IndexOf("=") + 1;
+            string coordinateNameWithEqual = coordinateString[0..equalIndex];
 
             Regex coordinateNumberRegex = new Regex("\\-*\\d*\\.{1}\\d+");
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
@@ -24,7 +23,7 @@ namespace fanuc_group_exchange_desktop.Parser
             Regex unitRegex = new Regex("mm|deg");
             string CoordinateUnit = unitRegex.Match(coordinateString).Value;
 
-            return new Coordinate(CoordinateNumber, CoordinatePosition, CoordinateUnit);
+            return new Coordinate(coordinateNameWithEqual, CoordinatePosition, CoordinateUnit);
         }
     }
 }

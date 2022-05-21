@@ -12,51 +12,83 @@ namespace fanuc_group_exchange_desktop.Parser
     {
         public override BasicInstance Parse(string groupString)
         {
-            string strGroupNumber = groupString.Substring(groupString.IndexOf("GP"), groupString.IndexOf(":") - groupString.IndexOf("GP"));
-            int groupNumber = int.Parse(strGroupNumber.Substring(2));
+            Regex digit = new Regex("\\d+");
+            int groupNumber = int.Parse(digit.Match(groupString).Value);
 
-            RobotGroup robotGroup;
-            if(groupNumber == 1)
+            string groupFrames = groupString[groupString.IndexOf("UF")..groupString.IndexOf(",")];
+            int userFrame = int.Parse(digit.Match(groupFrames).Value);
+
+            string groupTools = groupString[groupString.IndexOf("UT")..groupString.IndexOf(',', groupString.IndexOf("UT"))];
+            int userTool = int.Parse(digit.Match(groupTools).Value);
+
+            string configuration = "";
+            int configIndex = groupString.IndexOf("CONFIG");
+            if (configIndex != -1)
             {
-                robotGroup = ParseFirstGroup(groupString);
-            } else
-            {
-                robotGroup = ParseNotFirstGroup(groupNumber, groupString);
+                int lineIndex = groupString.IndexOf('\n', configIndex);
+                configuration = groupString[configIndex..lineIndex];
             }
-            return robotGroup;
-        }
 
-        private RobotFirstGroup ParseFirstGroup(string groupString)
-        {
-            return new RobotFirstGroup(1, groupString);
-        }
+            string positionString = configIndex != -1 ? groupString[groupString.IndexOf("X")..] : groupString[groupString.IndexOf("J")..];
 
-        private RobotNotFirstGroup ParseNotFirstGroup(int groupNumber, string groupString)
-        {
+            List<string> coordinatesList = new List<string>(positionString.Split(','));
 
-            string groupFrames = groupString.Substring(groupString.IndexOf("UF"));
-            groupFrames = groupFrames.Substring(0, groupFrames.IndexOf(","));
-            Regex groupFramesRegex = new Regex("\\d");
-            int UserFrame = int.Parse(groupFramesRegex.Match(groupFrames).Value);
-
-            string groupTools = groupString.Substring(groupString.IndexOf("UT"));
-            groupTools = groupTools.Substring(0, groupTools.IndexOf(","));
-            Regex groupToolRegex = new Regex("\\d");
-            int UserTool = int.Parse(groupToolRegex.Match(groupTools).Value);
-
-            string coordinatesString = groupString.Substring(groupString.IndexOf("J"));
-
-            List<string> coordinatesList = new List<string>(coordinatesString.Split(",	"));
-            List<Coordinate> Coordinates = new List<Coordinate>();
+            List<Coordinate> coordinates = new List<Coordinate>();
 
             foreach (string coordinateString in coordinatesList)
             {
                 CoordinateParser coordinateParser = new CoordinateParser();
-                Coordinate coordinate = coordinateParser.Parse(coordinateString) as Coordinate;
-                Coordinates.Add(coordinate);
+                Coordinate coordinate = coordinateParser.Parse(coordinateString.Trim()) as Coordinate;
+                coordinates.Add(coordinate);
             }
 
-            return new RobotNotFirstGroup(groupNumber, UserFrame, UserTool, Coordinates);
+
+            return new RobotGroup(groupNumber, userFrame, userTool, configuration, coordinates);
         }
+
+
+
+        //private RobotGroup ParseCartesianGroup(int groupNumber, string groupString)
+        //{
+        //    string groupFrames = groupString.Substring(groupString.IndexOf("UF"));
+        //    groupFrames = groupFrames.Substring(0, groupFrames.IndexOf(","));
+        //    Regex groupFramesRegex = new Regex("\\d");
+        //    int UserFrame = int.Parse(groupFramesRegex.Match(groupFrames).Value);
+
+        //    string groupTools = groupString.Substring(groupString.IndexOf("UT"));
+        //    groupTools = groupTools.Substring(0, groupTools.IndexOf(","));
+        //    Regex groupToolRegex = new Regex("\\d");
+        //    int UserTool = int.Parse(groupToolRegex.Match(groupTools).Value);
+
+
+        //}
+
+        //private RobotNotFirstGroup ParseJointGroup(int groupNumber, string groupString)
+        //{
+
+        //    string groupFrames = groupString.Substring(groupString.IndexOf("UF"));
+        //    groupFrames = groupFrames.Substring(0, groupFrames.IndexOf(","));
+        //    Regex groupFramesRegex = new Regex("\\d");
+        //    int UserFrame = int.Parse(groupFramesRegex.Match(groupFrames).Value);
+
+        //    string groupTools = groupString.Substring(groupString.IndexOf("UT"));
+        //    groupTools = groupTools.Substring(0, groupTools.IndexOf(","));
+        //    Regex groupToolRegex = new Regex("\\d");
+        //    int UserTool = int.Parse(groupToolRegex.Match(groupTools).Value);
+
+        //    string coordinatesString = groupString.Substring(groupString.IndexOf("J"));
+
+        //    List<string> coordinatesList = new List<string>(coordinatesString.Split(",	"));
+        //    List<Coordinate> Coordinates = new List<Coordinate>();
+
+        //    foreach (string coordinateString in coordinatesList)
+        //    {
+        //        CoordinateParser coordinateParser = new CoordinateParser();
+        //        Coordinate coordinate = coordinateParser.Parse(coordinateString) as Coordinate;
+        //        Coordinates.Add(coordinate);
+        //    }
+
+        //    return new RobotNotFirstGroup(groupNumber, UserFrame, UserTool, Coordinates);
+        //}
     }
 }

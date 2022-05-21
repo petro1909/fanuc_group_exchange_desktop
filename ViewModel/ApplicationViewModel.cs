@@ -18,8 +18,8 @@ namespace fanuc_group_exchange_desktop.ViewModel
         public FileWorker fileWorker;
         private string filePath;
 
-        private string _ProgramText;
-        public string ProgramText
+        private StringBuilder _ProgramText;
+        public StringBuilder ProgramText
         {
             set
             {
@@ -67,10 +67,10 @@ namespace fanuc_group_exchange_desktop.ViewModel
         public ApplicationViewModel(Window window)
         {
             fileWorker = new FileWorker();
-            ProgramText = App.placeholderText;
+            ProgramText = new StringBuilder(App.placeholderText);
             AddingGroupViewModels = new ObservableCollection<GroupViewModel>
             {
-                new GroupViewModel(new RobotNotFirstGroup(0,1), this)
+                new GroupViewModel(new RobotGroup(0,1), this)
             };
         }
 
@@ -113,9 +113,9 @@ namespace fanuc_group_exchange_desktop.ViewModel
             {
                 return _SaveFileCommand ??
                     (_SaveFileCommand = new RelayCommand(obj => {
-                        if (_ProgramText ==  App.placeholderText) return;
+                        if (_ProgramText ==  new StringBuilder(App.placeholderText)) return;
 
-                        string file = fileWorker.CombineFileParts();
+                        string file = fileWorker.CombineFileParts().ToString();
                         fileWorker.WriteToFile(filePath, file);
                     }));
             }
@@ -129,7 +129,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return _SaveFileAsCommand ??
                     (_SaveFileAsCommand = new RelayCommand(obj =>
                     {
-                        if (_ProgramText == App.placeholderText) return;
+                        if (_ProgramText == new StringBuilder(App.placeholderText)) return;
 
 
                         SaveFileDialog dialog = new SaveFileDialog();
@@ -139,7 +139,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                         string fileName = dialog.SafeFileName;
                         fileWorker.FileName = fileName.Substring(0, fileName.LastIndexOf("."));
 
-                        string file = fileWorker.CombineFileParts();
+                        string file = fileWorker.CombineFileParts().ToString();
                         fileWorker.WriteToFile(dialog.FileName, file);
                     }));
             }
@@ -172,7 +172,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return _AddGroupBlockCommand ??
                     (_AddGroupBlockCommand = new RelayCommand(obj =>
                     {
-                        RobotNotFirstGroup robotGroup = new RobotNotFirstGroup(0,1);
+                        RobotGroup robotGroup = new RobotGroup(0,1);
                         AddingGroupViewModels.Add(new GroupViewModel(robotGroup,this));
 
                     }));
@@ -205,7 +205,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                     {
                         if (SaveAddedGroupsCommand != null)
                         {
-                            if (_ProgramText == App.placeholderText) return;
+                            if (_ProgramText == new StringBuilder(App.placeholderText)) return;
 
                             List<RobotGroup> groups = new List<RobotGroup>();
                             
@@ -218,7 +218,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                                     return;
                                 }
                                 groupViewModel.SaveCoordinateBlockCommand.Execute(null);
-                                RobotNotFirstGroup robotNotFirstGroup = groupViewModel.robotGroup;
+                                RobotGroup robotNotFirstGroup = groupViewModel.robotGroup;
 
 
                                 groups.Add(robotNotFirstGroup);

@@ -153,7 +153,7 @@ namespace fanuc_group_exchange_desktop.View
         }
 
         private void MinimizeClick(object sender, RoutedEventArgs e)
-        {
+        {   
             Application.Current.MainWindow.WindowState = WindowState.Minimized;
         }
 

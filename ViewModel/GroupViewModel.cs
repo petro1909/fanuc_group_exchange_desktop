@@ -12,21 +12,21 @@ namespace fanuc_group_exchange_desktop.ViewModel
     public class GroupViewModel : BaseViewModel
     {
 
-        public RobotNotFirstGroup robotGroup;
+        public RobotGroup robotGroup;
 
         private ApplicationViewModel applicationViewModel;
 
 
         public GroupViewModel() { }
 
-        public GroupViewModel(RobotNotFirstGroup robotGroup, ApplicationViewModel applicationViewModel)
+        public GroupViewModel(RobotGroup robotGroup, ApplicationViewModel applicationViewModel)
         {
             this.applicationViewModel = applicationViewModel;
             this.robotGroup = robotGroup;
             Coordinates = new ObservableCollection<CoordinateViewModel>()
             {
 
-                new CoordinateViewModel(new Coordinate(1), this)
+                new CoordinateViewModel(new Coordinate("J1="), this)
             };
         }
 
@@ -108,7 +108,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return _AddCoordinateBlockCommand ?? (
                     _AddCoordinateBlockCommand = new RelayCommand(obj =>
                     {
-                        Coordinate coordinate = new Coordinate(Coordinates.Count+1);
+                        Coordinate coordinate = new Coordinate($"J{Coordinates.Count + 1}=");
                         Coordinates.Add(new CoordinateViewModel(coordinate,this));
                     }));
             }
@@ -124,12 +124,14 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return _DeleteCoordinateBlockCommand ??
                     (_DeleteCoordinateBlockCommand = new RelayCommand(obj =>
                     {
+
                         CoordinateViewModel coordinate = obj as CoordinateViewModel;
+                        int number = int.Parse(coordinate.CoordinateName[1..coordinate.CoordinateName.IndexOf('=')]);
                         Coordinates.Remove(coordinate);
 
-                        for(int i = coordinate.CoordinateNumber - 1; i < Coordinates.Count; i++)
+                        for(int i = number - 1; i < Coordinates.Count; i++)
                         {
-                            Coordinates[i].CoordinateNumber -= 1;
+                            Coordinates[i].CoordinateName = $"J{i+1}=";
                         }
                     }));
             }

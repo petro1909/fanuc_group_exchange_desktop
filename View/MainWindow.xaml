@@ -160,7 +160,7 @@
 
                             <StackPanel Grid.Row="2" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
                                 <d:StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
-                                    <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="{Binding StringFormat=J{0}\=, Path=CoordinateNumber}"></TextBlock>
+                                    <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="J1"></TextBlock>
                                     <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
                                     <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
                                         <ComboBox.ItemTemplate>
@@ -181,7 +181,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
-                                                <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="{Binding StringFormat=J{0}\=, Path=CoordinateNumber}"></TextBlock>
+                                                <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateName" Text="{Binding Path=CoordinateName}"></TextBlock>
                                                 <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
                                                 <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
                                                     <ComboBox.ItemTemplate>
@@ -268,7 +268,7 @@
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
-                                                            <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="{Binding StringFormat=J{0}\=, Path=CoordinateNumber}"></TextBlock>
+                                                            <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="{Binding Path=CoordinateName}"></TextBlock>
                                                             <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
                                                             <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
                                                             </ComboBox>

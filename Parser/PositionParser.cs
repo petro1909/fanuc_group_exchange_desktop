@@ -36,11 +36,13 @@ namespace fanuc_group_exchange_desktop.Parser
 
             List<string> strGroups = new(groups.Split("\n   "));
 
+
+
+
             for (int i = 0; i < strGroups.Count; i++) { 
 
                 GroupParser groupParser = new GroupParser();
-                RobotGroup robotGroup = groupParser.Parse(strGroups[i]) as RobotGroup; 
-
+                RobotGroup robotGroup = groupParser.Parse(strGroups[i]) as RobotGroup;
                 groupsDictionary.Add(robotGroup.Number, robotGroup);
             }
             return new RobotPosition(positionNumber, positionComment, groupsDictionary);

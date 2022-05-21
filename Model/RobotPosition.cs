@@ -52,7 +52,7 @@ namespace fanuc_group_exchange_desktop.Model
             {
                 robotGroups += "   " + robotGroup.Value.ToString();
             }
-            return "\nP[" + Number.ToString() + _PositionComment +  "]{\n" +  robotGroups + "\n};";
+            return "\nP[" + Number.ToString() + _PositionComment +  "]{" +  robotGroups + "\n};";
         }
     }
 }

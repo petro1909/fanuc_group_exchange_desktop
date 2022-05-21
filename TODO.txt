@@ -1,1 +1,3 @@
-﻿
+﻿add feachure to add and delete extanded axes for groups
+add undo and rendo
+add validator for coordinates

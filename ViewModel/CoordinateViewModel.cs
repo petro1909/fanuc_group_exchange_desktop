@@ -14,7 +14,6 @@ namespace fanuc_group_exchange_desktop.ViewModel
         public Coordinate Coordinate;
         private GroupViewModel groupViewModel;
 
-
         public CoordinateViewModel() { 
         }
 
@@ -24,14 +23,14 @@ namespace fanuc_group_exchange_desktop.ViewModel
             this.groupViewModel = groupViewModel;
         }
 
-        public int CoordinateNumber
+        public string CoordinateName
         {
-            set 
-            { 
-                Coordinate.Number = value;
-                OnPropertyChanged("CoordinateNumber");
+            set
+            {
+                Coordinate.CoordinateName = value;
+                OnPropertyChanged("CoordinateName");
             }
-            get { return Coordinate.Number; }
+            get { return Coordinate.CoordinateName; }
         }
 
         public double CoordinatePosition 
@@ -81,6 +80,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return _DeleteCoordinateCommand ??
                     (_DeleteCoordinateCommand = new RelayCommand(obj => 
                     {
+           
                         groupViewModel.DeleteCoordinateBlockCommand.Execute(this);
                     } ));
             }
