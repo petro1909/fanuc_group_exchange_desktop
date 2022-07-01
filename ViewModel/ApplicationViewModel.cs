@@ -15,21 +15,33 @@ namespace fanuc_group_exchange_desktop.ViewModel
 {
     public class ApplicationViewModel : BaseViewModel
     {
-        public FileWorker fileWorker;
+        private readonly FileService FileService;
+        private readonly RobotProgramService _RobotProgramService;
         private string filePath;
+        private RobotProgram Program;
 
-        private StringBuilder _ProgramText;
-        public StringBuilder ProgramText
+        public ApplicationViewModel(Window window)
+        {
+            FileService = new FileService();
+            _RobotProgramService = new RobotProgramService();
+
+            ProgramText = App.placeholderText;
+            AddingGroupViewModels = new ObservableCollection<GroupViewModel>
+            {
+                new GroupViewModel(new RobotGroup(0,1), this)
+            };
+        }
+
+
+        private string _ProgramText;
+        public string ProgramText
         {
             set
             {
                 _ProgramText = value;
                 OnPropertyChanged("ProgramText");
             }
-            get
-            {
-                return _ProgramText;
-            }
+            get => _ProgramText;
         }
 
 
@@ -42,10 +54,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 _UsedGroupsViewModels = value;
                 OnPropertyChanged("UsedGroupViewModels");
             }
-            get
-            {
-                return _UsedGroupsViewModels;
-            }
+            get => _UsedGroupsViewModels;
         }
 
 
@@ -57,209 +66,116 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 _AddingGroupViewModels = value;
                 OnPropertyChanged("AddingGroupViewModels");
             }
-            get
-            {
-                return _AddingGroupViewModels;
-            }
-        }
-
-
-        public ApplicationViewModel(Window window)
-        {
-            fileWorker = new FileWorker();
-            ProgramText = new StringBuilder(App.placeholderText);
-            AddingGroupViewModels = new ObservableCollection<GroupViewModel>
-            {
-                new GroupViewModel(new RobotGroup(0,1), this)
-            };
+            get => _AddingGroupViewModels;
         }
 
 
         private RelayCommand _GetFileCodeCommand;
-        public RelayCommand GetFileCodeCommand
+        public RelayCommand GetFileCodeCommand => _GetFileCodeCommand ??= new RelayCommand(obj =>
         {
-            get
-            {
-               return _GetFileCodeCommand ??
-                    (_GetFileCodeCommand = new RelayCommand(obj =>
-                    {
-                        FileDialog dialog = new OpenFileDialog();
-                        if (dialog.ShowDialog() == false) return;
+            FileDialog dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == false) return;
 
-                        filePath = dialog.FileName;
+            filePath = dialog.FileName;
+            string fileText = FileService.ReadAllText(filePath);
 
-                        fileWorker.ReadFromFile(filePath);
-                        ProgramText = fileWorker.CombineFileParts();
-
-
-                        List<string> groupList = fileWorker.UsedGroupsList;
+            this.Program = _RobotProgramService.GetFanucLSProgram(fileText);
+            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+            List<bool> groupList = this.Program.UsedGroupsList;
                         
-                        UsedGroupViewModels = new ObservableCollection<UsedGroupViewModel>();
-                        for (int i = 0; i < groupList.Count; i++)
-                        {
-                            if(groupList[i] == "1")
-                            {
-                                UsedGroupViewModels.Add(new UsedGroupViewModel(i+1,this));
-                            }
-                        }
-                    }));
-            }
-        }
-
-        public RelayCommand _SaveFileCommand;
-        public RelayCommand SaveFileCommand
-        {
-            get
+            UsedGroupViewModels = new ObservableCollection<UsedGroupViewModel>();
+            for (int i = 0; i < groupList.Count; i++)
             {
-                return _SaveFileCommand ??
-                    (_SaveFileCommand = new RelayCommand(obj => {
-                        if (_ProgramText ==  new StringBuilder(App.placeholderText)) return;
-
-                        string file = fileWorker.CombineFileParts().ToString();
-                        fileWorker.WriteToFile(filePath, file);
-                    }));
+                if (groupList[i])
+                {
+                    UsedGroupViewModels.Add(new UsedGroupViewModel(i + 1, this));
+                }
             }
-        }
+        });
 
-        public RelayCommand _SaveFileAsCommand;
-        public RelayCommand SaveFileAsCommand
+        private RelayCommand _SaveFileCommand;
+        public RelayCommand SaveFileCommand => _SaveFileCommand ??= new RelayCommand(obj =>
         {
-            get
-            {
-                return _SaveFileAsCommand ??
-                    (_SaveFileAsCommand = new RelayCommand(obj =>
-                    {
-                        if (_ProgramText == new StringBuilder(App.placeholderText)) return;
+            if (Program == null) return;
+            string programText = _RobotProgramService.CombineFileParts(this.Program);
+            FileService.WriteToFile(filePath, programText);
+        });
 
+        private RelayCommand _SaveFileAsCommand;
+        public RelayCommand SaveFileAsCommand => _SaveFileAsCommand ??= new RelayCommand(obj =>
+        {
+            if (Program == null) return;
 
-                        SaveFileDialog dialog = new SaveFileDialog();
-                        dialog.Filter = "Файлы программ (*.LS)|*.ls";
-                        if (dialog.ShowDialog() == false) return;
+            SaveFileDialog dialog = new();
+            dialog.Filter = "Файлы программ (*.LS)|*.ls";
+            if (dialog.ShowDialog() == false) return;
 
-                        string fileName = dialog.SafeFileName;
-                        fileWorker.FileName = fileName.Substring(0, fileName.LastIndexOf("."));
+            string programName = dialog.SafeFileName[0..dialog.SafeFileName.LastIndexOf(".")];
+            _RobotProgramService.SetFanucLSFileName(this.Program, programName);
 
-                        string file = fileWorker.CombineFileParts().ToString();
-                        fileWorker.WriteToFile(dialog.FileName, file);
-                    }));
-            }
-        }
+            string programText = _RobotProgramService.CombineFileParts(this.Program);
+            FileService.WriteToFile(dialog.FileName, programText);
+        });
 
 
         private RelayCommand _DeleteSelectedUsedGroupCommand;
-
-        public RelayCommand DeleteSelectedUsedGroupCommand
+        public RelayCommand DeleteSelectedUsedGroupCommand => _DeleteSelectedUsedGroupCommand ??= new RelayCommand(obj =>
         {
-            get
-            {
-                return _DeleteSelectedUsedGroupCommand ??
-                    (_DeleteSelectedUsedGroupCommand = new RelayCommand(obj =>
-                    {
-                        UsedGroupViewModel usedGroup = obj as UsedGroupViewModel;
-                        fileWorker.DeleteGroup(usedGroup.UsedGroupNumber);
-                        UsedGroupViewModels.Remove(usedGroup);
-                        ProgramText = fileWorker.CombineFileParts();
-                    }));
-            }
-        }
-
-        private RelayCommand _AddGroupBlockCommand;
-
-        public RelayCommand AddGroupBlockCommand
-        {
-            get
-            {
-                return _AddGroupBlockCommand ??
-                    (_AddGroupBlockCommand = new RelayCommand(obj =>
-                    {
-                        RobotGroup robotGroup = new RobotGroup(0,1);
-                        AddingGroupViewModels.Add(new GroupViewModel(robotGroup,this));
-
-                    }));
-            }
-        }
-
-        private RelayCommand _DeleteGroupBlockCommand;
-
-        public RelayCommand DeleteGroupBlockCommand
-        {
-            get
-            {
-                return _DeleteGroupBlockCommand ??
-                    (_DeleteGroupBlockCommand = new RelayCommand(obj =>
-                    {
-                        GroupViewModel group = obj as GroupViewModel;
-                        AddingGroupViewModels.Remove(group);
-                    }));
-            }
-        }
+            UsedGroupViewModel usedGroup = obj as UsedGroupViewModel;
+            _RobotProgramService.DeleteGroup(this.Program, usedGroup.UsedGroupNumber);
+            UsedGroupViewModels.Remove(usedGroup);
+            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+        });
 
         private RelayCommand _SaveAddedGroupsCommand;
-
-        public RelayCommand SaveAddedGroupsCommand
+        public RelayCommand SaveAddedGroupsCommand => _SaveAddedGroupsCommand ??= new RelayCommand(obj =>
         {
-            get
+            if (this.Program == null) return;
+            if (AddingGroupViewModels == null || AddingGroupViewModels.Count == 0) return;
+            
+            List<RobotGroup> AddedGroups = new();
+            foreach (GroupViewModel groupViewModel in AddingGroupViewModels)
             {
-                return _SaveAddedGroupsCommand ??
-                    (_SaveAddedGroupsCommand = new RelayCommand(obj =>
-                    {
-                        if (SaveAddedGroupsCommand != null)
-                        {
-                            if (_ProgramText == new StringBuilder(App.placeholderText)) return;
-
-                            List<RobotGroup> groups = new List<RobotGroup>();
-                            
-                            foreach(GroupViewModel groupViewModel in AddingGroupViewModels)
-                            {
-
-                                if (groupViewModel.GroupNumber == 0 || groupViewModel.GroupNumber == 1)
-                                {
-                                    MessageBox.Show("You can't add or change this group : " + groupViewModel.GroupNumber.ToString());
-                                    return;
-                                }
-                                groupViewModel.SaveCoordinateBlockCommand.Execute(null);
-                                RobotGroup robotNotFirstGroup = groupViewModel.robotGroup;
-
-
-                                groups.Add(robotNotFirstGroup);
-                                
-                                UsedGroupViewModel usedGroupViewModel = new UsedGroupViewModel(robotNotFirstGroup.Number, this);
-                                
-                                bool isContain = false;
-                                foreach (UsedGroupViewModel usedGroup in UsedGroupViewModels)
-                                {
-                                    if (usedGroup.UsedGroupNumber == usedGroupViewModel.UsedGroupNumber)
-                                    {
-                                        isContain = true;
-                                        break;
-                                    }
-                                }
-                                if (isContain == false)
-                                {
-                                    if (usedGroupViewModel.UsedGroupNumber < UsedGroupViewModels[UsedGroupViewModels.Count - 1].UsedGroupNumber)
-                                    {
-                                        for (int i = 0; i < UsedGroupViewModels.Count; i++)
-                                        {
-                                            if (UsedGroupViewModels[i].UsedGroupNumber > usedGroupViewModel.UsedGroupNumber)
-                                            {
-                                                UsedGroupViewModels.Insert(i, usedGroupViewModel);
-                                                break;
-                                            }
-                                        }
-                                    } else
-                                    {
-                                        UsedGroupViewModels.Add(usedGroupViewModel);
-                                    }
-                                }
-
-                                
-                            }
-                            fileWorker.SetFanucLSFilePositions(groups);
-
-                            ProgramText = fileWorker.CombineFileParts();
-                        }
-                    }));
+                if (groupViewModel.GroupNumber <= 1)
+                {
+                    MessageBox.Show($"You can't add or change this group : {groupViewModel.GroupNumber}");
+                    return;
+                }
+                groupViewModel.SaveCoordinateBlockCommand.Execute(null);
+                RobotGroup rGroup = groupViewModel.robotGroup;
+                AddedGroups.Add(rGroup);
             }
-        }
+            _RobotProgramService.AddGroups(this.Program, AddedGroups);
+            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+
+            List<bool> usedGroups = Program.UsedGroupsList;
+            
+            UsedGroupViewModels.Clear();
+            for(int i = 0; i < usedGroups.Count; i++)
+            {
+                if (usedGroups[i])
+                {
+                    UsedGroupViewModels.Add(new UsedGroupViewModel(i + 1, this));
+                }
+            }
+            AddingGroupViewModels.Clear();
+            AddingGroupViewModels.Add(new GroupViewModel(new RobotGroup(0, 1), this));
+        });
+
+
+        private RelayCommand _AddGroupBlockCommand;
+        public RelayCommand AddGroupBlockCommand => _AddGroupBlockCommand ??= new RelayCommand(obj =>
+        {
+            RobotGroup robotGroup = new(0, 1);
+            AddingGroupViewModels.Add(new GroupViewModel(robotGroup, this));
+
+        });
+
+        private RelayCommand _DeleteGroupBlockCommand;
+        public RelayCommand DeleteGroupBlockCommand => _DeleteGroupBlockCommand ??= new RelayCommand(obj =>
+        {
+            GroupViewModel group = obj as GroupViewModel;
+            AddingGroupViewModels.Remove(group);
+        });
     }
 }
