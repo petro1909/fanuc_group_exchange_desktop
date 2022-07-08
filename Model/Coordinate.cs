@@ -10,78 +10,40 @@ namespace fanuc_group_exchange_desktop.Model
 {
     public class Coordinate : BasicInstance
     {
-        private int _CoordinateNumber;
-        private double _CoordinatePosition;
-        private string _CoordinateUnit;
-
-
-        public int CoordinateNumber
-        {
-            set { 
-                if(value<=0)
-                {
-                    Console.WriteLine("Number of Coordinate can't be less or be a zero");
-                } else
-                {
-                    _CoordinateNumber = value;
-                }    
-            }
-            get { return _CoordinateNumber; }
-        }
-
-        public double CoordinatePosition
-        {
-            set { _CoordinatePosition = value; }
-            get { return _CoordinatePosition; }
-        }
-
-        public string CoordinateUnit
-        {
-            set { _CoordinateUnit = value; }
-            get { return _CoordinateUnit; }
-        }
+        public string CoordinateName { set; get; }
+        public double CoordinatePosition { set; get; }
+        public string CoordinateUnit { set; get; }
 
         public Coordinate() { }
 
-        public Coordinate(int CoordinateNumber, double CoordinatePosition, string CoordinateUnit)
+        public Coordinate(string CoordinateName, int number)
         {
-            this.CoordinateNumber = CoordinateNumber;
-            this.CoordinatePosition = CoordinatePosition;
-            this.CoordinateUnit = CoordinateUnit;
+            this.CoordinateName = CoordinateName;
+            this.Number = number;
         }
 
-
-        public override void Parse(string coordinateString)
+        public Coordinate(string CoordinateName, int number, double CoordinatePosition, string CoordinateUnit) : this(CoordinateName, number)
         {
-            Regex counterRegex = new Regex("J\\d+");
-            string coordinateCounterString = counterRegex.Match(coordinateString).Value;
-            int CoordinateNumber = int.Parse(coordinateCounterString.Substring(1));
-
-            Regex coordinateNumberRegex = new Regex("\\-*\\d*\\.{1}\\d+");
-            IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
-            double CoordinatePosition = double.Parse(coordinateNumberRegex.Match(coordinateString).Value, formatter);
-
-            Regex unitRegex = new Regex("mm|deg");
-            string CoordinateUnit = unitRegex.Match(coordinateString).Value;
-
-            this.CoordinateNumber = CoordinateNumber;
             this.CoordinatePosition = CoordinatePosition;
             this.CoordinateUnit = CoordinateUnit;
         }
 
         public override string ToString()
         {
-            string coordinateNumberString = "J" + _CoordinateNumber.ToString();
+            string numberStr = Number == 0 ? " " : Number.ToString(); 
 
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
-            string coordinatePositionString1 = String.Format(formatter, "{0:0.000}", _CoordinatePosition);
-            string coordinatePositionString = "          " + coordinatePositionString1;
-            coordinatePositionString = coordinatePositionString.Substring(coordinatePositionString1.Length);
+            string coordinatePositionString = string.Format(formatter, "{0:0.000}", CoordinatePosition);
 
-            string coordinateUnitString = "    " + _CoordinateUnit.ToString();
-            coordinateUnitString = coordinateUnitString.Substring(_CoordinateUnit.Length);
+            int whitespacesCount = 10 - coordinatePositionString.Length;
+            string whitespaceString = new(' ', whitespacesCount);
 
-            return "\t" + coordinateNumberString + "=" + coordinatePositionString + coordinateUnitString;
+
+            string coordinateUnitString;
+            if (CoordinateUnit.Equals("mm")) coordinateUnitString = $" {CoordinateUnit}";
+            else coordinateUnitString = $"{CoordinateUnit}";
+
+            return $"\t{CoordinateName}{numberStr}={whitespaceString}{coordinatePositionString} {coordinateUnitString}";
         }
     }
 }

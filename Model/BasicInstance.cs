@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace fanuc_group_exchange_desktop.Model
 {
-    public abstract class BasicInstance : Parser
+    public abstract class BasicInstance
     {
-        public int _Number;
+        private int _Number;
 
-
-        public int Number
+        internal int Number
         {
             set
             {
@@ -26,9 +25,5 @@ namespace fanuc_group_exchange_desktop.Model
             }
             get { return _Number; }
         }
-
-        public abstract void Parse(string str);
-
-
     }
 }

@@ -1,7 +1,3 @@
-﻿--Add some styles
---Add adaptive design
---Test for exceptions and add exception handling for it
---Add coordinates with minus sign
---Import mvvm pattern
---Add some instructions
---Add multithreading
+﻿add feachure to add and delete extanded axes for groups
+add undo and rendo
+add validator for coordinates
