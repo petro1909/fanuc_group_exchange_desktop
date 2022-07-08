@@ -9,42 +9,39 @@
         Title="Fanuc Group Exchanger" 
         WindowStyle="None" 
         AllowsTransparency="True"
-        MinWidth="980" MinHeight="500">
+        MinHeight="500">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="25"
                       GlassFrameThickness="2"
                       />
     </WindowChrome.WindowChrome>
-    
-    
+
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="resources/dictionaries/DarkThemeWinDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <Style BasedOn="{StaticResource ControlStyle}" x:Key="TextBoxStyle">
-                <Setter Property="ItemsControl.Height" Value="30"/>
-                <Setter Property="ItemsControl.VerticalContentAlignment" Value="Center"/>
-            </Style>
-
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid x:Name="MainGrid" Background="{StaticResource DarkThemeBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="32"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*" MinWidth="450"></ColumnDefinition>
-            <ColumnDefinition Width="45*" MinWidth="515"></ColumnDefinition>
+            <ColumnDefinition Width="45*" MinWidth="400"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="45*" MinWidth="430"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="45*" MinWidth="450"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="#FF3C3C3C">
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="5" Background="#FF3C3C3C">
             <DockPanel WindowChrome.IsHitTestVisibleInChrome="True">
                 <StackPanel DockPanel.Dock="Left"  Orientation="Horizontal" Margin="5 0 0 0">
                     <Image Source="resources/img/robot.png" Width="18" Height="18" ></Image>
@@ -52,246 +49,197 @@
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"  HorizontalAlignment="Right">
-                    <Button x:Name="MinimizeButton" Click="MinimizeClick" >
-                        <Image Source="resources/img/minimize.png" ></Image>
+                    <StackPanel.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource WindowMenuButton}"/>
+                    </StackPanel.Resources>
+                    <Button x:Name="MinimizeButton" Click="MinimizeClick">
+                        <Image Source="{StaticResource minusDrawingImage}" Width="20" Height="20" ></Image>
                     </Button>
                     <Button x:Name="MaximizeButton" Click="MaximizeClick">
-                        <Image x:Name="ChangeSinzeOfWindowImage" Source="resources/img/maximize.png"></Image>
+                        <Image x:Name="ChangeSinzeOfWindowImage" Source="{StaticResource maximizeDrawingImage}" Width="20" Height="20"></Image>
                     </Button>
                     <Button x:Name="CloseButton" Click="CloseClick">
-                        <Image Source="resources/img/close.png"></Image>
+                        <Image Source="{StaticResource deleteDrawingImage}" Width="20" Height="20"></Image>
                     </Button>
                 </StackPanel>
             </DockPanel>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="0">
+        <Border Grid.Row="1" Grid.ColumnSpan="5" BorderThickness="0 0 0 1" BorderBrush="#FFDCDCDC" >
+            <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left">
+                <StackPanel.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource MenuButton}"/>
+                </StackPanel.Resources>
+                <Label Content="_Change program name"  Target="{Binding ElementName=ProgramName}" Margin="0 0 4 0"/>
+                <TextBox Width="153" Height="30" x:Name="ProgramName" Text="{Binding ProgramNameText}"/>
+                <Button x:Name="ChangeProgramNameButton" Content="Save name" Margin="0 0 10 0" Command="{Binding SaveFileNameCommand}"/>
+
+                <Button x:Name="OpenFile" Command="{Binding GetFileCodeCommand}" Content="Open file"/>
+                <Button x:Name="Save"  Command="{Binding SaveFileCommand}" Content="Save file"/>
+                <Button x:Name="SaveAs" Command="{Binding SaveFileAsCommand}" Content="Save file as"/>
+                <Button x:Name="SaveG" Content="Save Changes" Command="{Binding SaveChangesCommand}"/>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="2" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="95*"></RowDefinition>
             </Grid.RowDefinitions>
 
             <ScrollViewer>
-                <TextBlock Grid.Row="0" x:Name="FileCode" Text="{Binding ProgramText}"/>
+                <TextBlock Grid.Row="0" x:Name="FileCode" VerticalAlignment="{Binding ProgramVA}" Style="{StaticResource ProgramText}" Text="{Binding ProgramText}"/>
             </ScrollViewer>
         </Grid>
 
-        <Grid x:Name="GroupInforamtion" Grid.Row="1" Grid.Column="1" >
+        <GridSplitter Grid.Column="1" Grid.Row="2" ShowsPreview="False"/>
+
+        <Grid x:Name="UsedGroupInformation" Grid.Row="2" Grid.Column="2" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="25*"></RowDefinition>
-                <RowDefinition Height="80*"></RowDefinition>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel x:Name="UsedGroups" Grid.Row="0" MinHeight="100">
-                <TextBlock Style="{StaticResource ControlStyle}" Text="List of used groups in choosen program" HorizontalAlignment="Center" FontSize="20"></TextBlock>
-                <WrapPanel VerticalAlignment="Top" Orientation="Horizontal" Margin="6,0,0,0">
-                    <d:StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource ControlStyle}" Text="{Binding StringFormat=Group {0}, Path=UsedGroupNumber}" d:Text="Group 1"></TextBlock>
-                        <Button Grid.Row="0" Grid.Column="1" Command="{Binding DeleteUsedGroup}"  Margin="3 0 3 0" Width="23" Height="23" >
-                            <Button.BorderThickness>0</Button.BorderThickness>
-                            <Image Source="resources/img/delete.png"/>
-                        </Button>
-                        <Border BorderThickness="0.5" BorderBrush="#FFDCDCDC"></Border>
-                    </d:StackPanel>
-                    <ItemsControl ItemsSource="{Binding UsedGroupViewModels}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Style="{StaticResource ControlStyle}" Text="{Binding StringFormat=Group {0}, Path=UsedGroupNumber}" d:Text="Group 1"></TextBlock>
-                                    <Button Grid.Row="0" Grid.Column="1" Command="{Binding DeleteUsedGroup}"  Margin="3 0 3 0" Width="23" Height="23" >
-                                        <Button.BorderThickness>0</Button.BorderThickness>
-                                        <Image Source="resources/img/delete.png"/>
-                                    </Button>
-                                    <Border BorderThickness="0.5" BorderBrush="#FFDCDCDC"></Border>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </WrapPanel>
-            </StackPanel>
-
-
+            <TextBlock Grid.Row="0" Style="{StaticResource TextH2}" Text="Used groups in choosen program"/>
             <ScrollViewer Grid.Row="1">
-                <StackPanel>
-
-                    <d:Grid MinWidth="350">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20*"></ColumnDefinition>
-                            <ColumnDefinition Width="80*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1"/>
-                        </Grid.RowDefinitions>
-
-                        <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,26.2,0,0">
-                            <Label Style="{StaticResource ControlStyle}" Target="{Binding ElementName=GroupNumber}" HorizontalAlignment="Center" Content="Group &#xD;&#xA;Number"/>
-                            <TextBox x:Name="GroupNumber"  Style="{StaticResource TextBoxStyle}" Text="{Binding Path=GroupNumber}" d:Text="2"></TextBox>
-                        </StackPanel>
-
-                        <Grid Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="50"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="40"/>
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlStyle}" Text="List of coordinates"/>
-                            <Button Grid.Row="0" Grid.Column="1" x:Name="delete_group_1" Command="{Binding DeleteGroupBlockCommand}"  Margin="3 0 0 0" Width="23" Height="23" >
-                                <Button.BorderThickness>0</Button.BorderThickness>
-                                <Image Source="resources/img/delete.png"/>
-                            </Button>
-
-                            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Background="#FF1E1E1E">
-                                <TextBlock Style="{StaticResource ControlStyle}">UF :</TextBlock>
-                                <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserFrame" Width="50"  Text="{Binding Path=GroupFrame}"></TextBox>
-                                <TextBlock Style="{StaticResource ControlStyle}">UT :</TextBlock>
-                                <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserTool" Width="50"  Text="{Binding Path=GroupTool}"></TextBox>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
-                                <d:StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
-                                    <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="J1"></TextBlock>
-                                    <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
-                                    <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border BorderThickness="0">
-                                                    <TextBlock Text="{Binding}" ></TextBlock>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                    <Button x:Name="delete_coordinate_1" Command="{Binding DeleteCoordinateCommand}"  Margin="3 0 0 0" Width="23" Height="23" Background="#FF1E1E1E">
-
-                                        <Button.BorderThickness>0</Button.BorderThickness>
-                                        <Image Source="resources/img/delete.png"></Image>
-                                    </Button>
-                                </d:StackPanel>
-                                <ItemsControl ItemsSource="{Binding Coordinates}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
-                                                <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateName" Text="{Binding Path=CoordinateName}"></TextBlock>
-                                                <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
-                                                <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
-                                                    <ComboBox.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Border BorderThickness="0">
-                                                                <TextBlock Text="{Binding}" ></TextBlock>
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </ComboBox.ItemTemplate>
-                                                </ComboBox>
-                                                <Button x:Name="delete_coordinate_1" Command="{Binding DeleteCoordinateCommand}"  Margin="3 0 0 0" Width="23" Height="23" Background="#FF1E1E1E">
-
-                                                    <Button.BorderThickness>0</Button.BorderThickness>
-                                                    <Image Source="resources/img/delete.png"></Image>
-                                                </Button>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-
-                            <Button Grid.Row="3" x:Name="addCoordinate" Command="{Binding AddCoordinateBlockCommand}" Width="25" Height="25" HorizontalAlignment="Left" Margin="0 0 9 0">
-                                <Button.BorderThickness>0</Button.BorderThickness>
-                                <Image Source="resources/img/delete.png"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Image.RenderTransform>
-                                        <RotateTransform CenterX="9.5" CenterY="9.5" Angle="45" ></RotateTransform>
-                                    </Image.RenderTransform>
-                                </Image>
-                            </Button>
-                        </Grid>
-                        <Border Grid.Row="1" Grid.ColumnSpan="2">
-                            <Border.Background>
-                                <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
-                            </Border.Background>
-                        </Border>
-                    </d:Grid>
-
-
-                    <ItemsControl  ItemsSource="{Binding AddingGroupViewModels}">
+                <StackPanel x:Name="UsedGroups" MinHeight="100" >
+                    <ItemsControl ItemsSource="{Binding  UsedGroupViewModels}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid MinWidth="350">
+                                <DataTemplate.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                </DataTemplate.Resources>
+                                <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20*"></ColumnDefinition>
-                                        <ColumnDefinition Width="80*"></ColumnDefinition>
+                                        <ColumnDefinition Width="60"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                        <ColumnDefinition Width="30"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
+
                                     <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition Height="1"/>
+                                        <RowDefinition Height="25"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="25"/>
+                                        <RowDefinition Height="2"/>
                                     </Grid.RowDefinitions>
 
-                                    <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,26.2,0,0">
-                                        <Label Style="{StaticResource ControlStyle}" Target="{Binding ElementName=GroupNumber}" HorizontalAlignment="Center" Content="Group &#xD;&#xA;Number"/>
-                                        <TextBox x:Name="GroupNumber"  Style="{StaticResource TextBoxStyle}" Text="{Binding Path=GroupNumber}" d:Text="2"></TextBox>
+                                    <TextBlock Grid.Column="0" Grid.Row="0"  x:Name="UsedGroupNumber" Text="{Binding StringFormat=№{0}, Path=GroupNumber}"/>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="1"  Text="Main axes" />
+                                    <StackPanel Grid.Row="1" Grid.Column="1" x:Name="UsedMainAxes" VerticalAlignment="Top" >
+                                        <TextBlock Text="{Binding UnnableToStringAxesText}" Height="{Binding Height}"/>
+                                        <ItemsControl ItemsSource="{Binding UsedMainAxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DataTemplate.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                                    </DataTemplate.Resources>
+                                                    <StackPanel x:Name="UsedMainAxe" Style="{StaticResource AxeSPanel}">
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                                    <Binding Path="CoordinateName"/>
+                                                                    <Binding Path="CoordinateNumber"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <Button x:Name="DeleteMainAxeButton" Command="{Binding DeleteAxeCommand}" CommandParameter="true">
+                                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <ItemsControl ItemsSource="{Binding AddingMainAxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DataTemplate.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                                    </DataTemplate.Resources>
+                                                    <StackPanel x:Name="MainAxeStackPanel" Style="{StaticResource AxeSPanel}">
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                                    <Binding Path="CoordinateName"/>
+                                                                    <Binding Path="CoordinateNumber"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <TextBox  x:Name="GroupPosition" Text="{Binding Path=CoordinatePosition}"/>
+                                                        <ComboBox  SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
+                                                        </ComboBox>
+                                                        <Button x:Name="delete_coordinate_1" Command="{Binding DeleteAxeCommand}" CommandParameter="false">
+                                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
+                                    <Button Grid.Row="2" Grid.Column="1" x:Name="AddMainAxeButton" Command="{Binding AddAxeBlockCommand}" CommandParameter="J" HorizontalAlignment="Left" Margin="0 0 9 0">
+                                        <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                        </Image>
+                                    </Button>
 
-                                    <Grid Grid.Column="1">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="50"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="40"/>
-                                            <RowDefinition Height="40"/>
-                                            <RowDefinition Height="1*"/>
-                                            <RowDefinition Height="40"/>
-                                        </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource ControlStyle}" Text="Extended axes"/>
+                                    <StackPanel Grid.Row="1" Grid.Column="2" x:Name="UsedExtendedAxes" VerticalAlignment="Top">
+                                        <ItemsControl ItemsSource="{Binding UsedExtendedAxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DataTemplate.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                                    </DataTemplate.Resources>
+                                                    <StackPanel x:Name="UsedExtendedAxe" Style="{StaticResource AxeSPanel}">
+                                                        <TextBlock >
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                                    <Binding Path="CoordinateName"/>
+                                                                    <Binding Path="CoordinateNumber"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <Button x:Name="DeleteExtendedAxeButton" Command="{Binding DeleteAxeCommand}" CommandParameter="true"  Margin="3 0 0 0">
+                                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <ItemsControl ItemsSource="{Binding AddingExtendedAxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DataTemplate.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                                    </DataTemplate.Resources>
+                                                    <StackPanel x:Name="CoqordianteStackPanel" Style="{StaticResource AxeSPanel}">
+                                                        <TextBlock x:Name="CooqrdinateNumber">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                                    <Binding Path="CoordinateName"/>
+                                                                    <Binding Path="CoordinateNumber"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <TextBox x:Name="GrouqpPosition" Text="{Binding Path=CoordinatePosition}"/>
+                                                        <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
+                                                        </ComboBox>
+                                                        <Button x:Name="delqete_coordinate_1" Command="{Binding DeleteAxeCommand}" CommandParameter="false"  Margin="3 0 0 0">
+                                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                    <Button Grid.Row="2" Grid.Column="2" x:Name="AddExtendedAxeButton" Command="{Binding AddAxeBlockCommand}" CommandParameter="E"  HorizontalAlignment="Left" Margin="0 0 9 0">
+                                        <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                        </Image>
+                                    </Button>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlStyle}" Text="List of coordinates"/>
-                                        <Button Grid.Row="0" Grid.Column="1" x:Name="delete_group_1" Command="{Binding DeleteGroupBlockCommand}"  Margin="3 0 0 0" Width="23" Height="23" >
-                                            <Button.BorderThickness>0</Button.BorderThickness>
-                                            <Image Source="resources/img/delete.png"/>
-                                        </Button>
+                                    <Button Grid.Row="0" Grid.Column="3" x:Name="DeleteSelectedGroup" Command="{Binding DeleteSelectedUsedGroupCommand}" Margin="3 0 0 0">
+                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"/>
+                                    </Button>
 
-                                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Background="#FF1E1E1E">
-                                            <TextBlock Style="{StaticResource ControlStyle}">UF :</TextBlock>
-                                            <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserFrame" Width="50"  Text="{Binding Path=GroupFrame}"></TextBox>
-                                            <TextBlock Style="{StaticResource ControlStyle}">UT :</TextBlock>
-                                            <TextBox Background="#FF1E1E1E" Style="{StaticResource ControlStyle}" x:Name="UserTool" Width="50"  Text="{Binding Path=GroupTool}"></TextBox>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Row="2" x:Name="GroupsCoordinates" Style="{StaticResource ControlStyle}">
-                                            <ItemsControl ItemsSource="{Binding Coordinates}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel Height="30" x:Name="CoordianteStackPanel" Orientation="Horizontal" Background="#FF1E1E1E">
-                                                            <TextBlock  Foreground="#FFDCDCDC" Padding="0 2" x:Name="CoordinateNumber" Text="{Binding Path=CoordinateName}"></TextBlock>
-                                                            <TextBox Foreground="#FFDCDCDC" Background="#FF1E1E1E" Height="30" VerticalAlignment="Center" x:Name="GroupPosition" Width="180" Text="{Binding Path=CoordinatePosition}"/>
-                                                            <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
-                                                            </ComboBox>
-                                                            <Button x:Name="delete_coordinate_1" Command="{Binding DeleteCoordinateCommand}"  Margin="3 0 0 0" Width="23" Height="23" Background="#FF1E1E1E">
-
-                                                                <Button.BorderThickness>0</Button.BorderThickness>
-                                                                <Image Source="resources/img/delete.png"></Image>
-                                                            </Button>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                        <Button Grid.Row="3" x:Name="addCoordinate" Command="{Binding AddCoordinateBlockCommand}" Width="25" Height="25" HorizontalAlignment="Left" Margin="0 0 9 0">
-                                            <Button.BorderThickness>0</Button.BorderThickness>
-                                            <Image Source="resources/img/delete.png"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Image.RenderTransform>
-                                                    <RotateTransform CenterX="9.5" CenterY="9.5" Angle="45" ></RotateTransform>
-                                                </Image.RenderTransform>
-                                            </Image>
-                                        </Button>
-                                    </Grid>
-                                    <Border Grid.Row="1" Grid.ColumnSpan="2">
+                                    <Border Grid.Row="4" Grid.ColumnSpan="4">
                                         <Border.Background>
                                             <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
                                         </Border.Background>
@@ -300,17 +248,344 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <d:Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="15*"></ColumnDefinition>
+                            <ColumnDefinition Width="85*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <TextBlock x:Name="UsedGroupNumber" Text="№2"/>
+                        </StackPanel>
+
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0"  Text="Main axes"/>
+                            <StackPanel Grid.Row="1" Grid.Column="0" x:Name="UsedMainAxes" VerticalAlignment="Top" >
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                </StackPanel.Resources>
+                                <StackPanel Height="30" x:Name="UsedMainAxe" Orientation="Horizontal">
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            J1
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <Button x:Name="DeleteMainAxeButton" Command="{Binding DeleteAxeCommand}" CommandParameter="true">
+                                        <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"/>
+                                    </Button>
+                                </StackPanel>
+                                <StackPanel Height="30" x:Name="MainAxeStackPanel1" Orientation="Horizontal">
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            J2
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBox  x:Name="GroupPosition1" Text="{Binding Path=CoordinatePosition}"/>
+                                    <ComboBox  SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
+                                    </ComboBox>
+                                    <Button x:Name="delete_coordinate_12" Command="{Binding DeleteAxeCommand}" CommandParameter="false">
+                                        <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Grid.Row="3" Grid.Column="0" x:Name="AddMainAxeButton" Command="{Binding AddAxeBlockCommand}" CommandParameter="J" HorizontalAlignment="Left" Margin="0 0 9 0">
+                                <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                </Image>
+                            </Button>
+
+                            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource ControlStyle}" Text="Extended axes"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" x:Name="UsedExtendedAxes" VerticalAlignment="Top">
+
+                            <StackPanel Height="30" x:Name="UsedExtendedAxe" Orientation="Horizontal">
+                                <TextBlock >
+                                    <TextBlock.Text>
+                                        E1
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button x:Name="DeleteExtendedAxeButton" Command="{Binding DeleteAxeCommand}" CommandParameter="true"  Margin="3 0 0 0">
+                                    <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Height="30" x:Name="d_CoqordianteStackPanel" Orientation="Horizontal">
+                                <TextBlock x:Name="d_CooqrdinateNumber">
+                                    <TextBlock.Text>
+                                        E2
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBox x:Name="d_GrouqpPosition" Text="{Binding Path=CoordinatePosition}"/>
+                                <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
+                                </ComboBox>
+                                <Button x:Name="d_delete_coordinate_1" Command="{Binding DeleteAxeCommand}" CommandParameter="false"  Margin="3 0 0 0">
+                                    <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                </Button>
+                            </StackPanel>
+
+                            </StackPanel>
+                            <Button Grid.Row="3" Grid.Column="1" x:Name="AddExtendedAxeButton" Command="{Binding AddAxeBlockCommand}" CommandParameter="E"  HorizontalAlignment="Left" Margin="0 0 9 0">
+                                <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                </Image>
+                            </Button>
+
+                            <Button Grid.Row="0" Grid.Column="2" x:Name="DeleteSelectedGroup" Command="{Binding DeleteSelectedUsedGroupCommand}" Margin="3 0 0 0">
+                                <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"/>
+                            </Button>
+
+                        </Grid>
+                        <Border Grid.Row="1" Grid.ColumnSpan="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
+                            </Border.Background>
+                        </Border>
+                    </d:Grid>
+                
                 </StackPanel>
             </ScrollViewer>
         </Grid>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button x:Name="OpenFile" Width="100" Command="{Binding GetFileCodeCommand}">Open File</Button>
-            <Button x:Name="Save" Width="100"  Command="{Binding SaveFileCommand}">Save</Button>
-            <Button x:Name="SaveAs" Width="100"  Command="{Binding SaveFileAsCommand}" >Save as</Button>
-            <Button x:Name="SaveGroups" Content="Save Group" Command="{Binding SaveAddedGroupsCommand}"/>
-            <Button x:Name="AddGroup" Content="Add Group Block" Command="{Binding AddGroupBlockCommand}"/>
-        </StackPanel>
+        <GridSplitter Grid.Column="3" Grid.Row="2" ShowsPreview="False" />
 
+        <Grid Grid.Row="2" Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Style="{StaticResource TextH2}" Text="Groups to add in choosen program"/>
+            
+            <ScrollViewer Grid.Row="1">
+                <StackPanel>
+                    <d:Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="15*"></ColumnDefinition>
+                            <ColumnDefinition Width="85*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Label Margin="0" Target="{Binding ElementName=AddedGroupNumber}" HorizontalAlignment="Center" Content="№"/>
+                                <TextBox x:Name="AddedGroupNumber" Width="30"  Text="{Binding Path=GroupNumber}" d:Text="2"></TextBox>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Label  Margin="0" Target="{Binding ElementName=AddedGroupUF}" HorizontalAlignment="Center" Content="UF"/>
+                                <TextBox x:Name="AddedGroupUF" Width="30"  Text="{Binding Path=GroupFrame}" d:Text="1"></TextBox>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Label  Margin="0" Target="{Binding ElementName=AddedGroupUT}" HorizontalAlignment="Center" Content="UT"/>
+                                <TextBox x:Name="AddedGroupUT" Width="30"  Text="{Binding Path=GroupTool}" d:Text="1"></TextBox>
+                            </StackPanel>
+                        </Grid>
+
+
+
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Main axes"/>
+                            <StackPanel Grid.Row="1" x:Name="AddingGroupsMainAxes" >
+                                <StackPanel Height="30" x:Name="MainAxeStackPanel" Orientation="Horizontal">
+                                    <TextBlock  x:Name="CoordinateNumber" Text="J1"></TextBlock>
+                                    <TextBox Height="30" x:Name="GroupPosition" Width="50" Text="{Binding Path=CoordinatePosition}"/>
+                                    <ComboBox >
+                                    </ComboBox>
+                                    <Button x:Name="delete_coordinate_1" Command="{Binding DeleteCoordinateCommand}"  Margin="3 0 0 0">
+                                        <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Button Grid.Row="2" x:Name="addCoordinate" Command="{Binding AddCoordinateBlockCommand}" HorizontalAlignment="Left" Margin="0 0 9 0">
+                                <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                </Image>
+                            </Button>
+
+
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Extended axes"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" x:Name="GqroupsCoordinates" Style="{StaticResource ControlStyle}">
+                                <StackPanel Height="30" x:Name="CoqordianteStackPanel" Orientation="Horizontal" >
+                                    <TextBlock  x:Name="CooqrdinateNumber" Text="E1"></TextBlock>
+                                    <TextBox Height="30" x:Name="GrouqpPosition" Width="50" Text="{Binding Path=CoordinatePosition}"/>
+                                    <ComboBox >
+                                    </ComboBox>
+                                    <Button x:Name="delqete_coordinate_1" Command="{Binding DeleteCoordinateCommand}"  Margin="3 0 0 0">
+                                        <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Button Grid.Row="2" Grid.Column="1" x:Name="addCoqordinate" Command="{Binding AddCoordinateBlockCommand}" HorizontalAlignment="Left" Margin="0 0 9 0">
+                                <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                </Image>
+                            </Button>
+
+                            <Button Grid.Row="0" Grid.Column="2" x:Name="delete_group_1" Command="{Binding DeleteGroupBlockCommand}"  Margin="3 0 0 0">
+                                <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"/>
+                            </Button>
+                        </Grid>
+                        <Border Grid.Row="1" Grid.ColumnSpan="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
+                            </Border.Background>
+                        </Border>
+                    </d:Grid>
+                    <ItemsControl  ItemsSource="{Binding AddingGroupViewModels}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <DataTemplate.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                </DataTemplate.Resources>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                        <ColumnDefinition Width="30"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="25"/>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="25"/>
+                                        <RowDefinition Height="2"/>
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Orientation="Vertical">
+
+                                        <DockPanel Margin="0 5 3 1">
+                                            <Label Margin="0" Target="{Binding ElementName=AddedGroupNumber}" Content="№"/>
+                                            <TextBox x:Name="AddedGroupNumber" Width="30" Text="{Binding Path=GroupNumber}" d:Text="2" HorizontalAlignment="Right" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0 0 3 1">
+                                            <Label Margin="0" Target="{Binding ElementName=AddedGroupUF}" Content="UF"/>
+                                            <TextBox x:Name="AddedGroupUF" Width="30"  Text="{Binding Path=GroupFrame}" d:Text="1" HorizontalAlignment="Right"/>
+                                        </DockPanel>
+                                        <DockPanel Margin="0 0 3 1">
+                                            <Label  Margin="0" Target="{Binding ElementName=AddedGroupUT}" Content="UT"/>
+                                            <TextBox x:Name="AddedGroupUT" Width="30" Text="{Binding Path=GroupTool}" d:Text="1" HorizontalAlignment="Right"/>
+                                        </DockPanel>
+                                    </StackPanel>
+
+
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Main axes"/>
+                                    <StackPanel Grid.Row="1" Grid.Column="1" x:Name="AddingGroupsMainAxes">
+                                        <ItemsControl ItemsSource="{Binding AddingMainAxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DataTemplate.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                                    </DataTemplate.Resources>
+                                                    <StackPanel  x:Name="MainAxeStackPanel" Style="{StaticResource AxeSPanel}">
+                                                        <TextBlock   x:Name="CoordinateNumber">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                                    <Binding Path="CoordinateName"/>
+                                                                    <Binding Path="CoordinateNumber"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <TextBox x:Name="GroupPosition" Text="{Binding Path=CoordinatePosition}"/>
+                                                        <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
+                                                        </ComboBox>
+                                                        <Button x:Name="delete_coordinate_1" Command="{Binding DeleteAxeCommand}" CommandParameter="false"  Margin="3 0 0 0">
+                                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <Button Grid.Row="2" Grid.Column="1" x:Name="addCoordinate" Command="{Binding AddAxeBlockCommand}" CommandParameter="J" HorizontalAlignment="Left" Margin="0 0 9 0">
+                                        <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}">
+                                        </Image>
+                                    </Button>
+
+
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource ControlStyle}" Text="Extended axes"/>
+                                    <StackPanel Grid.Row="1" Grid.Column="2" x:Name="GqroupsCoordinates">
+                                        <ItemsControl ItemsSource="{Binding AddingExtendedAxes}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DataTemplate.Resources>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DataTemplateTextBox}"></Style>
+                                                    </DataTemplate.Resources>
+                                                    <StackPanel  x:Name="CoqordianteStackPanel" Style="{StaticResource AxeSPanel}">
+                                                        <TextBlock x:Name="CooqrdinateNumber">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0}{1}">
+                                                                    <Binding Path="CoordinateName"/>
+                                                                    <Binding Path="CoordinateNumber"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <TextBox x:Name="GrouqpPosition" Text="{Binding Path=CoordinatePosition}"/>
+                                                        <ComboBox SelectedIndex="0" SelectedItem="{Binding Path=CoordinateUnit}" ItemsSource="{Binding Units}">
+                                                        </ComboBox>
+                                                        <Button x:Name="delqete_coordinate_1" Command="{Binding DeleteAxeCommand}" CommandParameter="false"  Margin="3 0 0 0">
+                                                            <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"></Image>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <Button Grid.Row="2" Grid.Column="2" x:Name="addCoqordinate" Command="{Binding AddAxeBlockCommand}" CommandParameter="E"  HorizontalAlignment="Left" Margin="0 0 9 0">
+                                        <Image Source="{StaticResource plusDrawingImage}" Style="{StaticResource MinImage}" >
+                                        </Image>
+                                    </Button>
+
+                                    <Button Grid.Row="0" Grid.Column="4" x:Name="delete_group_1" Command="{Binding DeleteAddingGroupBlockCommand}"  Margin="3 0 0 0">
+                                        <Image Source="{StaticResource deleteDrawingImage}" Style="{StaticResource MinImage}"/>
+                                    </Button>
+                                    <Border Grid.Row="4" Grid.ColumnSpan="4">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="#FFDCDCDC"></SolidColorBrush>
+                                        </Border.Background>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button x:Name="AddGroup" Style="{StaticResource MenuButton}" HorizontalAlignment="Right" Content="Add Group Block" Command="{Binding AddGroupBlockCommand}" Margin="0"/>
+                </StackPanel>
+                
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

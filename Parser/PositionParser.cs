@@ -64,27 +64,30 @@ namespace fanuc_group_exchange_desktop.Parser
                 int lineIndex = groupString.IndexOf('\n', configIndex);
                 configuration = groupString[configIndex..lineIndex];
             }
-
-            string positionString = configIndex != -1 ? groupString[groupString.IndexOf("X")..] : groupString[groupString.IndexOf("J")..];
+            string positionString = groupString[groupString.IndexOfAny(new char[] { 'J', 'X', 'E' })..];
 
             List<string> coordinatesList = new List<string>(positionString.Split(','));
 
-            List<Coordinate> coordinates = new List<Coordinate>();
+            List<Coordinate> axes = new List<Coordinate>();
 
             foreach (string coordinateString in coordinatesList)
             {
-                Coordinate coordinate = ParseCoordinate(coordinateString.Trim());
-                coordinates.Add(coordinate);
+                Coordinate coordinate = ParseAxe(coordinateString.Trim());
+                axes.Add(coordinate);
             }
 
-            return new RobotGroup(groupNumber, userFrame, userTool, configuration, coordinates);
+            return new RobotGroup(groupNumber, userFrame, userTool, configuration, axes);
         }
 
-        private Coordinate ParseCoordinate(string coordinateString)
+        private Coordinate ParseAxe(string coordinateString)
         {
-            int equalIndex = coordinateString.IndexOf("=") + 1;
-            string coordinateNameWithEqual = coordinateString[0..equalIndex];
+            string axeName = coordinateString[0].ToString();
 
+            int equalIndex = coordinateString.IndexOf("=");
+            string axeNumberStr = coordinateString[1..equalIndex];
+            
+            int.TryParse(axeNumberStr, out int axeNumber);
+            
             Regex coordinateNumberRegex = new Regex("\\-*\\d*\\.{1}\\d+");
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
             double CoordinatePosition = double.Parse(coordinateNumberRegex.Match(coordinateString).Value, formatter);
@@ -92,7 +95,7 @@ namespace fanuc_group_exchange_desktop.Parser
             Regex unitRegex = new Regex("mm|deg");
             string CoordinateUnit = unitRegex.Match(coordinateString).Value;
 
-            return new Coordinate(coordinateNameWithEqual, CoordinatePosition, CoordinateUnit);
+            return new Coordinate(axeName, axeNumber, CoordinatePosition, CoordinateUnit);
         }
     }
 }

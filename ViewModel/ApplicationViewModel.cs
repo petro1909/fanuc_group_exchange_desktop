@@ -26,10 +26,11 @@ namespace fanuc_group_exchange_desktop.ViewModel
             _RobotProgramService = new RobotProgramService();
 
             ProgramText = App.placeholderText;
-            AddingGroupViewModels = new ObservableCollection<GroupViewModel>
+            AddingGroupViewModels = new ObservableCollection<AddingGroupViewModel>
             {
-                new GroupViewModel(new RobotGroup(0,1), this)
+                new AddingGroupViewModel(new RobotGroup(0,1), this)
             };
+            ProgramVA = VerticalAlignment.Center;
         }
 
 
@@ -42,6 +43,34 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 OnPropertyChanged("ProgramText");
             }
             get => _ProgramText;
+        }
+
+        private string _ProgramNameText;
+        public string ProgramNameText
+        {
+            set
+            {
+                _ProgramNameText = value;
+                OnPropertyChanged("ProgramNameText");
+            } 
+            get
+            {
+                return _ProgramNameText;
+            }
+        }
+
+        private VerticalAlignment _ProgramVA;
+        public VerticalAlignment ProgramVA
+        {
+            set
+            {
+                _ProgramVA = value;
+                OnPropertyChanged();
+            }
+            get
+            {
+                return _ProgramVA;
+            }
         }
 
 
@@ -58,8 +87,8 @@ namespace fanuc_group_exchange_desktop.ViewModel
         }
 
 
-        private ObservableCollection<GroupViewModel> _AddingGroupViewModels;
-        public ObservableCollection<GroupViewModel> AddingGroupViewModels
+        private ObservableCollection<AddingGroupViewModel> _AddingGroupViewModels;
+        public ObservableCollection<AddingGroupViewModel> AddingGroupViewModels
         {
             set
             {
@@ -68,6 +97,7 @@ namespace fanuc_group_exchange_desktop.ViewModel
             }
             get => _AddingGroupViewModels;
         }
+
 
 
         private RelayCommand _GetFileCodeCommand;
@@ -80,17 +110,28 @@ namespace fanuc_group_exchange_desktop.ViewModel
             string fileText = FileService.ReadAllText(filePath);
 
             this.Program = _RobotProgramService.GetFanucLSProgram(fileText);
-            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+            ProgramNameText = Program.Name;
+            UpdateProgramText();
+            ProgramVA = VerticalAlignment.Top;
+
             List<bool> groupList = this.Program.UsedGroupsList;
-                        
+
             UsedGroupViewModels = new ObservableCollection<UsedGroupViewModel>();
-            for (int i = 0; i < groupList.Count; i++)
+
+            IEnumerable<RobotGroup> usedGroups = this.Program.RobotPositions[0].RobotGroupsList.Values;
+            foreach(RobotGroup group in usedGroups)
             {
-                if (groupList[i])
-                {
-                    UsedGroupViewModels.Add(new UsedGroupViewModel(i + 1, this));
-                }
+                UsedGroupViewModels.Add(new UsedGroupViewModel(group, this));
             }
+
+        });
+
+        private RelayCommand _SaveFileNameCommand;
+        public RelayCommand SaveFileNameCommand => _SaveFileNameCommand ??= new RelayCommand(obj =>
+        {
+            if (Program == null) return;
+            _RobotProgramService.SetFanucLSFileName(this.Program, ProgramNameText);
+            UpdateProgramText();
         });
 
         private RelayCommand _SaveFileCommand;
@@ -98,7 +139,11 @@ namespace fanuc_group_exchange_desktop.ViewModel
         {
             if (Program == null) return;
             string programText = _RobotProgramService.CombineFileParts(this.Program);
-            FileService.WriteToFile(filePath, programText);
+
+            string newFilePath = $"{filePath[0..(filePath.LastIndexOf("\\")+1)]}{Program.Name}.LS";
+            FileService.DeleteFile(filePath);
+            FileService.WriteToFile(newFilePath, programText);
+            
         });
 
         private RelayCommand _SaveFileAsCommand;
@@ -118,48 +163,38 @@ namespace fanuc_group_exchange_desktop.ViewModel
         });
 
 
-        private RelayCommand _DeleteSelectedUsedGroupCommand;
-        public RelayCommand DeleteSelectedUsedGroupCommand => _DeleteSelectedUsedGroupCommand ??= new RelayCommand(obj =>
-        {
-            UsedGroupViewModel usedGroup = obj as UsedGroupViewModel;
-            _RobotProgramService.DeleteGroup(this.Program, usedGroup.UsedGroupNumber);
-            UsedGroupViewModels.Remove(usedGroup);
-            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
-        });
-
-        private RelayCommand _SaveAddedGroupsCommand;
-        public RelayCommand SaveAddedGroupsCommand => _SaveAddedGroupsCommand ??= new RelayCommand(obj =>
+        private RelayCommand _SaveChangesCommand;
+        public RelayCommand SaveChangesCommand => _SaveChangesCommand ??= new RelayCommand(obj =>
         {
             if (this.Program == null) return;
-            if (AddingGroupViewModels == null || AddingGroupViewModels.Count == 0) return;
+            if (AddingGroupViewModels == null) return;
             
-            List<RobotGroup> AddedGroups = new();
-            foreach (GroupViewModel groupViewModel in AddingGroupViewModels)
-            {
-                if (groupViewModel.GroupNumber <= 1)
-                {
-                    MessageBox.Show($"You can't add or change this group : {groupViewModel.GroupNumber}");
-                    return;
-                }
-                groupViewModel.SaveCoordinateBlockCommand.Execute(null);
-                RobotGroup rGroup = groupViewModel.robotGroup;
-                AddedGroups.Add(rGroup);
-            }
-            _RobotProgramService.AddGroups(this.Program, AddedGroups);
-            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+            List<RobotGroup> updatedGroups = new();
 
-            List<bool> usedGroups = Program.UsedGroupsList;
-            
-            UsedGroupViewModels.Clear();
-            for(int i = 0; i < usedGroups.Count; i++)
+            ObservableCollection<GroupViewModel> commonGroups = new ObservableCollection<GroupViewModel>(UsedGroupViewModels);
+            foreach (var addingGroupVM in AddingGroupViewModels)
             {
-                if (usedGroups[i])
-                {
-                    UsedGroupViewModels.Add(new UsedGroupViewModel(i + 1, this));
-                }
+                if (addingGroupVM.Group.Number == 0 || addingGroupVM.AddingMainAxes.Count == 0) continue;
+                commonGroups.Add(addingGroupVM);
+
+            }
+            foreach (GroupViewModel groupViewModel in commonGroups)
+            {
+                groupViewModel.SaveCoordinates();
+                updatedGroups.Add(groupViewModel.Group);
+            }
+            _RobotProgramService.SetGroups(this.Program, updatedGroups);
+            UpdateProgramText();
+
+            UsedGroupViewModels.Clear();
+            
+            IEnumerable<RobotGroup> usedGroups = this.Program.RobotPositions[0].RobotGroupsList.Values;
+            foreach (RobotGroup group in usedGroups)
+            {
+                UsedGroupViewModels.Add(new UsedGroupViewModel(group, this));
             }
             AddingGroupViewModels.Clear();
-            AddingGroupViewModels.Add(new GroupViewModel(new RobotGroup(0, 1), this));
+            AddingGroupViewModels.Add(new AddingGroupViewModel(new RobotGroup(0, 1), this));
         });
 
 
@@ -167,15 +202,33 @@ namespace fanuc_group_exchange_desktop.ViewModel
         public RelayCommand AddGroupBlockCommand => _AddGroupBlockCommand ??= new RelayCommand(obj =>
         {
             RobotGroup robotGroup = new(0, 1);
-            AddingGroupViewModels.Add(new GroupViewModel(robotGroup, this));
+            AddingGroupViewModels.Add(new AddingGroupViewModel(robotGroup, this));
 
         });
 
-        private RelayCommand _DeleteGroupBlockCommand;
-        public RelayCommand DeleteGroupBlockCommand => _DeleteGroupBlockCommand ??= new RelayCommand(obj =>
+
+        //---Delete selected used group in current program---//
+        private RelayCommand _DeleteSelectedUsedGroupCommand;
+        public RelayCommand DeleteSelectedUsedGroupCommand => _DeleteSelectedUsedGroupCommand ??= new RelayCommand(obj =>
         {
-            GroupViewModel group = obj as GroupViewModel;
+            UsedGroupViewModel usedGroup = obj as UsedGroupViewModel;
+            _RobotProgramService.DeleteGroup(this.Program, usedGroup.GroupNumber);
+            UsedGroupViewModels.Remove(usedGroup);
+            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+        });
+
+        //---Delete selected group block in adding group list---//
+        private RelayCommand _DeleteAddingGroupBlockCommand;
+        public RelayCommand DeleteAddingGroupBlockCommand => _DeleteAddingGroupBlockCommand ??= new RelayCommand(obj =>
+        {
+            AddingGroupViewModel group = obj as AddingGroupViewModel;
             AddingGroupViewModels.Remove(group);
         });
+
+
+        public void UpdateProgramText()
+        {
+            ProgramText = _RobotProgramService.CombineFileParts(this.Program);
+        }
     }
 }

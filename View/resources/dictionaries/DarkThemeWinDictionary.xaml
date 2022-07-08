@@ -3,40 +3,40 @@
 
 
     <SolidColorBrush x:Key="DarkThemeBackgroundBrush" Color="#FF1E1E1E"/>
-    
     <SolidColorBrush x:Key="DarkThemeLightBackgroundBrush" Color="#FF3C3C3C"/>
+    <SolidColorBrush x:Key="DarkThemeForegroundBrush" Color="#FFDCDCDC"/>
 
     <Color x:Key="DarkThemeBackgroundColor">#FF1E1E1E</Color>
     <Color x:Key="DarkThemeLightBackgroundColor">#FF3C3C3C</Color>
     <Color x:Key="DarkThemePathColor">#ABADB3</Color>
     <Color x:Key="ForegroundColor">#FFDCDCDC</Color>
+    <Color x:Key="ButtonMouseOver">#FF68686B</Color>
     
     
 
     <Style x:Key="ControlStyle">
         <Setter Property="ItemsControl.FontFamily" Value="Verdana"></Setter>
-        <Setter Property="ItemsControl.FontSize" Value="18"></Setter>
-        <Setter Property="ItemsControl.Margin" Value="5"></Setter>
+        <Setter Property="ItemsControl.FontSize" Value="16"></Setter>
+        <Setter Property="ItemsControl.FontWeight" Value="Normal"/>
+        <Setter Property="ItemsControl.Margin" Value="0"></Setter>
         <Setter Property="ItemsControl.Padding" Value="0"></Setter>
-        <Setter Property="ItemsControl.VerticalAlignment" Value="Center"></Setter>
+        <Setter Property="ItemsControl.VerticalAlignment" Value="Center"/>
         <Setter Property="ItemsControl.Background" Value="{StaticResource DarkThemeBackgroundBrush}"/>
-        <Setter Property="ItemsControl.Foreground" Value="#FFDCDCDC"></Setter>
+        <Setter Property="ItemsControl.Foreground" Value="{StaticResource DarkThemeForegroundBrush}"></Setter>
     </Style>
 
-    <!--_____________________Button_______________________-->
-    <Style TargetType="Button">
+    <!--_____________________Base Button_______________________-->
+    <Style TargetType="Button" x:Key="BaseButton">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border"
-                                BorderThickness="1">
+                                BorderThickness="0"
+                                Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}">
                         <TextBlock.Foreground>
-                            <SolidColorBrush x:Name="BorderTextBlockForeground" Color="#FFF1F1F1"></SolidColorBrush>
+                            <SolidColorBrush x:Name="BorderTextBlockForeground" Color="{StaticResource ForegroundColor}"></SolidColorBrush>
                         </TextBlock.Foreground>
-
-                        <Border.Background>
-                            <SolidColorBrush x:Name="BorderBackgroundColor" Color="#FF2D2D30"></SolidColorBrush>
-                        </Border.Background>
 
                         <VisualStateManager.VisualStateGroups>
 
@@ -44,10 +44,10 @@
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="MouseOver">
                                     <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="BorderBackgroundColor" 
-                                                            Storyboard.TargetProperty="Color" 
-                                                            To="#FF68686B" >
-                                        </ColorAnimation>
+                                        <ColorAnimationUsingKeyFrames   Storyboard.TargetProperty="(Panel.Background).(Color)" 
+                                                                        Storyboard.TargetName="Border">
+                                            <EasingColorKeyFrame KeyTime="0" Value="{StaticResource ButtonMouseOver}"/>
+                                        </ColorAnimationUsingKeyFrames>
                                         <ColorAnimation Storyboard.TargetName="BorderTextBlockForeground" 
                                                             Storyboard.TargetProperty="Color" 
                                                             To="#FFD6D6D6">
@@ -56,18 +56,18 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="BorderBackgroundColor"
-                                                            Storyboard.TargetProperty="Color" 
-                                                            To="#FF005A96" 
-                                                            Duration="0:0:0.2">
-                                        </ColorAnimation>
+                                        <ColorAnimationUsingKeyFrames   Storyboard.TargetProperty="(Panel.Background).(Color)" 
+                                                                        Storyboard.TargetName="Border">
+                                            <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF005A96"/>
+                                        </ColorAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="BorderBackgroundColor"
-                                                            Storyboard.TargetProperty="Color" 
-                                                            To="#FF2D2D30"/>
+                                        <ColorAnimationUsingKeyFrames   Storyboard.TargetProperty="(Panel.Background).(Color)" 
+                                                                        Storyboard.TargetName="Border">
+                                            <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF2D2D30"/>
+                                        </ColorAnimationUsingKeyFrames>
                                         <ColorAnimation Storyboard.TargetName="BorderTextBlockForeground"
                                                             Storyboard.TargetProperty="Color" 
                                                             To="#FF4A4A4C"/>
@@ -77,10 +77,11 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <ContentControl 
-                                Margin="2"
-                                FontSize="20"
-                                FontWeight="DemiBold"
-                                FontFamily="Leelawadee UI"
+                                Margin="0"
+                                Padding="0"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontFamily="Verdana"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Content="{TemplateBinding Content}">
@@ -90,27 +91,99 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!--_____________________Button_______________________-->
+    <!--_____________________Base Button_______________________-->
+
+
+
+
+    <!--Style for Label-->
+    <Style TargetType="Label" BasedOn="{StaticResource ControlStyle}"/>
+    <!--Style for Label-->
     
+    <!--Style for Textlock that is not Textblock in Data Template-->
+    <Style TargetType="TextBlock" BasedOn="{StaticResource ControlStyle}"/>
+    <!--Style for Textblock that is not Textblock in Data Template-->
     
-    
-    
-    
-    <Style  TargetType="TextBlock">
-        <Setter Property="ItemsControl.Background" Value="#FF1E1E1E"/>
-        <Setter Property="ItemsControl.Foreground" Value="#FFDCDCDC"/>
+    <!--Style for Textblock in Data Templates-->
+    <Style x:Key="DataTemplateTextBox" TargetType="TextBlock" BasedOn="{StaticResource ControlStyle}"/>
+    <!--Style for Textblock in Data Templates-->
+
+    <!--Style for Grid Splitter-->
+    <Style TargetType="GridSplitter">
+        <Setter Property="ItemsControl.Width" Value="3"/>
+        <Setter Property="ItemsControl.VerticalAlignment" Value="Stretch"/>
+        <Setter Property="ItemsControl.HorizontalAlignment" Value="Center"/>
+        <Setter Property="ItemsControl.Background" Value="{StaticResource DarkThemeBackgroundBrush}"/>
+    </Style>
+    <!--Style for Grid Splitter-->
+
+    <!--Style for Program Text textblock-->
+    <Style x:Key="ProgramText" BasedOn="{StaticResource ControlStyle}">
         <Setter Property="ItemsControl.FontFamily" Value="Consolas"/>
         <Setter Property="ItemsControl.FontSize" Value="12"/>
         <Setter Property="ItemsControl.FontWeight" Value="Normal"/>
-        <Setter Property="ItemsControl.Margin" Value="3"/>
-        <Setter Property="ItemsControl.VerticalAlignment" Value="Center"></Setter>
+        <Setter Property="ItemsControl.VerticalAlignment" Value="Top"/>
+    </Style>
+    <!--Style for Program Text textblock-->
+    
+    <!--Style for Text header of used groups and adding groups-->
+    <Style x:Key="TextH2" BasedOn="{StaticResource ControlStyle}">
+        <Setter Property="ItemsControl.FontSize" Value="20"/>
+        <Setter Property="ItemsControl.HorizontalAlignment" Value="Center"/>
+    </Style>
+    <!--Style for Text header of used groups and adding groups-->
+
+    
+    <!--Add axe button, delete axe button and delete group button-->
+    <Style TargetType="Button" BasedOn="{StaticResource BaseButton}">
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Background" Value="#FF1E1E1E"/>
+    </Style>
+    <!--Add axe button, delete axe button and delete group button-->
+
+    <!--Menu button-->
+    <Style TargetType="Button" x:Key="MenuButton" BasedOn="{StaticResource BaseButton}">
+        <Setter Property="Background" Value="#FF3C3C3C"/>
+        <Setter Property="Margin" Value="0 0 3 0"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="MinWidth" Value="40"/>
+        <Setter Property="Padding" Value="10 0"/>
+        <Setter Property="FontWeight" Value="Black"/>
+    </Style>
+    <!--Menu button-->
+
+    <!--Style for svg images for delete and add buttons-->
+    <Style x:Key="MinImage" TargetType="Image" >
+        <Setter Property="Image.Width"  Value="20"/>
+        <Setter Property="Image.Height" Value="20"/>
+    </Style>
+    <!--Style for svg images for delete and add buttons-->
+
+    <!--Style for texbox for axes adding-->
+    <Style TargetType="TextBox" BasedOn="{StaticResource ControlStyle}">
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="62"/>
+        <Setter Property="FontSize" Value="14"></Setter>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="2 0 0 0"/>
+    </Style>
+    <!--Style for texbox for axes adding-->
+
+    <Style TargetType="StackPanel" x:Key="AxeSPanel">
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Orientation" Value="Horizontal"/>
+        <Setter Property="Margin" Value="0 0 0 3"/>
     </Style>
 
-    <Style x:Key="WindowMenuButton">
-        <Setter Property="ItemsControl.BorderThickness" Value="0"/>
-        <Setter Property="ItemsControl.Margin" Value="1"/>
-        <Setter Property="ItemsControl.Width" Value="40"></Setter>
-        <Setter Property="ItemsControl.Height" Value="22"></Setter>
+    <Style  TargetType="Button" x:Key="WindowMenuButton" BasedOn="{StaticResource BaseButton}">
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{StaticResource DarkThemeLightBackgroundBrush}"/>
+        <Setter Property="Padding" Value="10 0"/>
     </Style>
 
 
@@ -379,7 +452,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="18" />
             </Grid.ColumnDefinitions>
             
             <VisualStateManager.VisualStateGroups>
@@ -446,7 +519,7 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
-        <Setter Property="MinWidth" Value="100"/>
+        <Setter Property="MinWidth" Value="55"/>
            
         <Setter Property="Template">
             <Setter.Value>
@@ -492,8 +565,11 @@
                                             ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                             ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                             Margin="5,0,0,0"
-                                            VerticalAlignment="Stretch"
+                                            VerticalAlignment="Center"
                                             HorizontalAlignment="Left">
+                            <TextBlock.FontSize>
+                                15
+                            </TextBlock.FontSize>
                             <TextBlock.Foreground>
                                 <SolidColorBrush Color="{StaticResource ForegroundColor}"/>
                             </TextBlock.Foreground>
@@ -503,7 +579,7 @@
                                     Style="{x:Null}"
                                     Template="{StaticResource ComboBoxTextBox}"
                                     HorizontalAlignment="Left"
-                                    VerticalAlignment="Bottom"
+                                    VerticalAlignment="Center"
                                     Margin="5,0,0,0"
                                     Focusable="True"
                                     Visibility="Hidden"
@@ -579,6 +655,9 @@
                         <TextBlock.Foreground>
                             <SolidColorBrush x:Name="TextlockBackground" Color="{StaticResource ForegroundColor}"/>
                         </TextBlock.Foreground>
+                        <TextBlock.FontSize>
+                            15
+                        </TextBlock.FontSize>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SelectionStates">
                                 <VisualState x:Name="Unselected" />
@@ -601,6 +680,77 @@
     </Style>
     <!--_____________________Combobox_______________________-->
 
+    <DrawingImage x:Key="plusDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                <GeometryDrawing Brush="#D1D1D1" Geometry="F0 M24, 24z M0, 0z   
+                                 M22, 11.5   
+                                 L12.5, 11.5 
+                                 12.5, 2 
+                                 11.5,2 
+                                 11.5, 11.5 
+                                 2, 11.5 
+                                 2, 12.5 
+                                 11.5, 12.5 
+                                 11.5, 22
+                                 12.5, 22
+                                 12.5, 12.5 
+                                 22, 12.5" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="deleteDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                <GeometryDrawing Brush="#D1D1D1" Geometry="F1 M24, 24z M0,0z 
+                                 M2.707, 2
+                                 L2, 2.707
+                                 11.293, 12 
+                                 2, 21.293
+                                 2.707, 22 
+                                 12, 12.707 
+                                 21.293, 22 
+                                 22, 21.293 
+                                 12.707, 12 
+                                 22, 2.707 
+                                 21.293, 2 
+                                 12, 11.293z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="minusDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                <GeometryDrawing Brush="#D1D1D1" Geometry="F1 M24, 24z M0,0z 
+                                 M2, 11.5
+                                 2, 12.5,
+                                 22, 12.5,
+                                 22, 11.5" />
+                
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="maximizeDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                <GeometryDrawing Brush="#D1D1D1" Geometry="F1 M24, 24z M0,0z 
+                                 M2, 2
+                                 2, 22
+                                 22, 22
+                                 L22, 2 
+                                 
+                                 M3, 3 
+                                 L21, 3 
+                                 L21, 21 
+                                 L3, 21
+                                 L3, 3z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
 
 
 </ResourceDictionary>

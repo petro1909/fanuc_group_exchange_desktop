@@ -15,6 +15,7 @@
     <None Remove="View\resources\img\maximize.png" />
     <None Remove="View\resources\img\minimize.png" />
     <None Remove="View\resources\img\normalize.png" />
+    <None Remove="View\resources\img\plus.svg" />
     <None Remove="View\resources\img\robot.png" />
     <None Remove="View\resources\img\squares.png" />
   </ItemGroup>
@@ -26,6 +27,7 @@
     <Resource Include="View\resources\img\delete.png" />
     <Resource Include="View\resources\img\close.png" />
     <Resource Include="View\resources\img\maximize.png" />
+    <Resource Include="View\resources\img\plus.svg" />
     <Resource Include="View\resources\img\robot.png" />
     <Resource Include="View\resources\img\squares.png" />
   </ItemGroup>

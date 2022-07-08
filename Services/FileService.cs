@@ -22,9 +22,17 @@ namespace fanuc_group_exchange_desktop.Services
             return file.Name;
         }
 
-        public void WriteToFile(string path, string code)
+        public void DeleteFile(string filePath)
         {
-            using (StreamWriter streamWriter = new StreamWriter(path))
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        } 
+
+        public void WriteToFile(string path, string code, bool isOverride = true)
+        {
+            using (StreamWriter streamWriter = new StreamWriter(path, !isOverride))
             {
                 streamWriter.WriteLine(code);
             }

@@ -68,7 +68,7 @@ namespace fanuc_group_exchange_desktop.Services
 
         private List<RobotPosition> GetFanucLSFilePositionList(string positionSection)
         {
-            positionSection = positionSection[positionSection.IndexOf("P[")..];
+            positionSection = positionSection[positionSection.IndexOf("P[")..^1];
             try
             {
                 List<string> positionStringList = new List<string>(positionSection.Split(";\r\n"));
@@ -157,7 +157,7 @@ namespace fanuc_group_exchange_desktop.Services
             RobotGroupsService.SetGroup(program, group);
         }
 
-        public void AddGroups(RobotProgram program, List<RobotGroup> groups)
+        public void SetGroups(RobotProgram program, List<RobotGroup> groups)
         {
             foreach(RobotGroup group in groups)
             {

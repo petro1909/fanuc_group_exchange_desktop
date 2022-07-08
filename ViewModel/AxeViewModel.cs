@@ -9,18 +9,15 @@ using System.Collections.ObjectModel;
 
 namespace fanuc_group_exchange_desktop.ViewModel
 {
-    public class CoordinateViewModel : BaseViewModel
+    public class AxeViewModel : BaseViewModel
     {
+        private GroupViewModel GroupVM;
         public Coordinate Coordinate;
-        private GroupViewModel groupViewModel;
 
-        public CoordinateViewModel() { 
-        }
-
-        public CoordinateViewModel(Coordinate coordinate, GroupViewModel groupViewModel)
+        public AxeViewModel(Coordinate coordinate, GroupViewModel groupVM)
         {
             this.Coordinate = coordinate;
-            this.groupViewModel = groupViewModel;
+            GroupVM = groupVM;
         }
 
         public string CoordinateName
@@ -31,6 +28,21 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 OnPropertyChanged("CoordinateName");
             }
             get { return Coordinate.CoordinateName; }
+        }
+
+        public string CoordinateNumber
+        {
+            set
+            { 
+
+                Coordinate.Number = int.Parse(value);
+                OnPropertyChanged("CoordinateNumber");
+            }
+            get
+            {
+                string numberStr = Coordinate.Number == 0 ? string.Empty : Coordinate.Number.ToString(); 
+                return  numberStr;
+            }
         }
 
         public double CoordinatePosition 
@@ -70,19 +82,24 @@ namespace fanuc_group_exchange_desktop.ViewModel
                 return new ObservableCollection<string> { "mm", "deg" };
             }
         }
-
-
-        private RelayCommand _DeleteCoordinateCommand;
-        public RelayCommand DeleteCoordinateCommand
+        private RelayCommand _DeleteAxeCommand;
+        public RelayCommand DeleteAxeCommand
         {
             get
             {
-                return _DeleteCoordinateCommand ??
-                    (_DeleteCoordinateCommand = new RelayCommand(obj => 
+                return _DeleteAxeCommand ??
+                    (_DeleteAxeCommand = new RelayCommand(obj =>
                     {
-           
-                        groupViewModel.DeleteCoordinateBlockCommand.Execute(this);
-                    } ));
+                        bool isUsedAxe = bool.Parse(obj.ToString());
+                        if (isUsedAxe)
+                        {
+                            GroupVM.DeleteUsedAxeCommand.Execute(this);
+                        }
+                        else
+                        {
+                            GroupVM.DeleteAddingAxeCommand.Execute(this);
+                        }
+                    }));
             }
         }
     }

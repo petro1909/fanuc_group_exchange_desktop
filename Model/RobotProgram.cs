@@ -102,7 +102,7 @@ namespace fanuc_group_exchange_desktop.Model
         {
             get
             {
-                return "\nEND";
+                return "\n/END";
             }
         }
 

@@ -14,23 +14,24 @@ namespace fanuc_group_exchange_desktop.Model
         public double CoordinatePosition { set; get; }
         public string CoordinateUnit { set; get; }
 
-
         public Coordinate() { }
 
-        public Coordinate(string CoordinateName)
+        public Coordinate(string CoordinateName, int number)
         {
             this.CoordinateName = CoordinateName;
+            this.Number = number;
         }
 
-        public Coordinate(string CoordinateName, double CoordinatePosition, string CoordinateUnit)
+        public Coordinate(string CoordinateName, int number, double CoordinatePosition, string CoordinateUnit) : this(CoordinateName, number)
         {
-            this.CoordinateName = CoordinateName;
             this.CoordinatePosition = CoordinatePosition;
             this.CoordinateUnit = CoordinateUnit;
         }
 
         public override string ToString()
         {
+            string numberStr = Number == 0 ? " " : Number.ToString(); 
+
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "." };
             string coordinatePositionString = string.Format(formatter, "{0:0.000}", CoordinatePosition);
 
@@ -42,7 +43,7 @@ namespace fanuc_group_exchange_desktop.Model
             if (CoordinateUnit.Equals("mm")) coordinateUnitString = $" {CoordinateUnit}";
             else coordinateUnitString = $"{CoordinateUnit}";
 
-            return $"\t{CoordinateName}{whitespaceString}{coordinatePositionString} {coordinateUnitString}";
+            return $"\t{CoordinateName}{numberStr}={whitespaceString}{coordinatePositionString} {coordinateUnitString}";
         }
     }
 }

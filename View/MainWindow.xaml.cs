@@ -95,10 +95,12 @@ namespace fanuc_group_exchange_desktop.View
             public int right;
             public int bottom;
             public static readonly RECT Empty = new RECT();
-            public int Width { 
-                get { 
-                    return Math.Abs(right - left); 
-                } 
+            public int Width
+            {
+                get
+                {
+                    return Math.Abs(right - left);
+                }
             }
             public int Height { get { return bottom - top; } }
             public RECT(int left, int top, int right, int bottom)
@@ -129,7 +131,7 @@ namespace fanuc_group_exchange_desktop.View
             /// <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
             public override int GetHashCode() => left.GetHashCode() + top.GetHashCode() + right.GetHashCode() + bottom.GetHashCode();
             /// <summary> Determine if 2 RECT are equal (deep compare)</summary>
-            public static bool operator ==(RECT rect1, RECT rect2) { return (rect1.left == rect2.left && rect1.top == rect2.top && rect1.right == rect2.right && rect1.bottom == rect2.bottom); }
+            public static bool operator ==(RECT rect1, RECT rect2) { return rect1.left == rect2.left && rect1.top == rect2.top && rect1.right == rect2.right && rect1.bottom == rect2.bottom; }
             /// <summary> Determine if 2 RECT are different(deep compare)</summary>
             public static bool operator !=(RECT rect1, RECT rect2) { return !(rect1 == rect2); }
         }
@@ -139,6 +141,39 @@ namespace fanuc_group_exchange_desktop.View
 
         [DllImport("User32")]
         internal static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
+        //private IntPtr hWnd;
+
+        //internal class ApiCodes
+        //{
+        //    public const int SC_RESTORE = 0xF120;
+        //    public const int SC_MINIMIZE = 0xF020;
+        //    public const int WM_SYSCOMMAND = 0x0112;
+        //}
+
+        //[DllImport("user32.dll")]
+        //private static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
+
+
+        //private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        //{
+        //    if (msg == ApiCodes.WM_SYSCOMMAND)
+        //    {
+        //        if (wParam.ToInt32() == ApiCodes.SC_MINIMIZE)
+        //        {
+        //            WindowStyle = WindowStyle.SingleBorderWindow;
+        //            WindowState = WindowState.Minimized;
+        //            handled = true;
+        //        }
+        //        else if (wParam.ToInt32() == ApiCodes.SC_RESTORE)
+        //        {
+        //            WindowState = WindowState.Normal;
+        //            WindowStyle = WindowStyle.None;
+        //            handled = true;
+        //        }
+        //    }
+        //    return IntPtr.Zero;
+        //}
 
 
         public MainWindow()
@@ -153,78 +188,18 @@ namespace fanuc_group_exchange_desktop.View
         }
 
         private void MinimizeClick(object sender, RoutedEventArgs e)
-        {   
+        {
             Application.Current.MainWindow.WindowState = WindowState.Minimized;
         }
 
-
         private void MaximizeClick(object sender, RoutedEventArgs e)
         {
-
-            if (WindowState == WindowState.Maximized)
-            {
-                WindowState = WindowState.Normal;
-                //ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\maximize.png", UriKind.Relative));
-            }
-            else
-            {
-                WindowState = WindowState.Maximized;
-                //ChangeSinzeOfWindowImage.Source = new BitmapImage(new Uri(@"resources\img\normalize.png", UriKind.Relative));
-            }
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
 
         private void CloseClick(object sender, RoutedEventArgs e)
         {
             Close();
         }
-
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        //public class WinParameters
-        //{
-        //    static double Height;
-        //    static double Width;
-        //    static double Left;
-        //    static double Top;
-
-        //    public WinParameters()
-        //    {
-
-        //    }
-
-        //    public static void ChangeSize(Window window, bool isFullScreen)
-        //    {
-        //        if (isFullScreen == false)
-        //        {
-        //            Height = window.Height;
-        //            Width = window.Width;
-        //            Left = window.Left;
-        //            Top = window.Top;
-        //            window.Height = SystemParameters.WorkArea.Height;
-        //            window.Width = SystemParameters.WorkArea.Width;
-        //            window.Left = SystemParameters.WorkArea.Left;
-        //            window.Top = SystemParameters.WorkArea.Top;
-        //        }
-        //        else
-        //        {
-        //            window.Height = Height;
-        //            window.Width = Width;
-        //            window.Left = Left;
-        //            window.Top = Top;
-        //        }
-        //    }
-
-        //    public static void Drag(Window window, bool isFullScreen)
-        //    {
-        //        if (isFullScreen == true)
-        //        {
-        //            window.Height = Height;
-        //            window.Width = Width;
-        //        }
-        //    }
-        //}
     } 
 }

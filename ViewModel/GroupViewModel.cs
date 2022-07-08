@@ -4,42 +4,34 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using fanuc_group_exchange_desktop.Model;
 using fanuc_group_exchange_desktop.Command;
+using fanuc_group_exchange_desktop.Model;
 
 namespace fanuc_group_exchange_desktop.ViewModel
 {
-    public class GroupViewModel : BaseViewModel
+    public abstract class GroupViewModel : BaseViewModel
     {
+        public RobotGroup Group;
+        public ApplicationViewModel applicationViewModel;
 
-        public RobotGroup robotGroup;
-
-        private ApplicationViewModel applicationViewModel;
-
-
-        public GroupViewModel() { }
-
-        public GroupViewModel(RobotGroup robotGroup, ApplicationViewModel applicationViewModel)
+        protected GroupViewModel(RobotGroup group, ApplicationViewModel applicationViewModel)
         {
+            Group = group;
             this.applicationViewModel = applicationViewModel;
-            this.robotGroup = robotGroup;
-            Coordinates = new ObservableCollection<CoordinateViewModel>()
-            {
-
-                new CoordinateViewModel(new Coordinate("J1="), this)
-            };
+            AddingExtendedAxes = new ObservableCollection<AxeViewModel>();
+            AddingMainAxes = new ObservableCollection<AxeViewModel>();
         }
 
         public int GroupNumber
         {
             set
             {
-                robotGroup.Number = value;
+                Group.Number = value;
                 OnPropertyChanged("GroupNumber");
             }
             get
             {
-                return robotGroup.Number;
+                return Group.Number;
             }
         }
 
@@ -47,12 +39,12 @@ namespace fanuc_group_exchange_desktop.ViewModel
         {
             set
             {
-                robotGroup.UserFrame = value;
+                Group.UserFrame = value;
                 OnPropertyChanged("GroupFrame");
             }
             get
             {
-                return robotGroup.UserFrame;
+                return Group.UserFrame;
             }
         }
 
@@ -60,109 +52,93 @@ namespace fanuc_group_exchange_desktop.ViewModel
         {
             set
             {
-                robotGroup.UserTool = value;
+                Group.UserTool = value;
                 OnPropertyChanged("GroupTool");
             }
             get
             {
-                return robotGroup.UserTool;
+                return Group.UserTool;
             }
         }
 
-        private ObservableCollection<CoordinateViewModel> _Coordinates;
-        public ObservableCollection<CoordinateViewModel> Coordinates
+        private ObservableCollection<AxeViewModel> _AddingMainAxes;
+        public ObservableCollection<AxeViewModel> AddingMainAxes
         {
             set
             {
-                _Coordinates = value;
-               
+                _AddingMainAxes = value;
+                OnPropertyChanged("AddingMainAxes");
+            }
+            get
+            {
+                return _AddingMainAxes;
+            }
+        }
+
+
+        private ObservableCollection<AxeViewModel> _AddingExtendedAxes;
+        public ObservableCollection<AxeViewModel> AddingExtendedAxes
+        {
+            set
+            {
+                _AddingExtendedAxes = value;
+                OnPropertyChanged("AddingMainAxes");
+            }
+            get
+            {
+                return _AddingExtendedAxes;
+            }
+        }
+
+
+        public virtual RelayCommand AddAxeBlockCommand { set; get; }
+        public virtual RelayCommand DeleteUsedAxeCommand { set; get; }
+
+        private RelayCommand _DeleteAddingAxeCommand;
+        public RelayCommand DeleteAddingAxeCommand => _DeleteAddingAxeCommand ??= new RelayCommand(obj =>
+        {
+            AxeViewModel coordinate = obj as AxeViewModel;
+            int selectedNumber = coordinate.Coordinate.Number;
+            if (coordinate.Coordinate.CoordinateName == "E")
+            {
+                int firstAxeNumber = AddingExtendedAxes[0].Coordinate.Number;
+                AddingExtendedAxes.Remove(coordinate);
+                if (AddingExtendedAxes.Count == 0)
+                {
+                    return;
+                }
                 
-                OnPropertyChanged("RobotCoordiantes");
+                for (int i = selectedNumber, j = selectedNumber - firstAxeNumber; j < AddingExtendedAxes.Count; i++, j++)
+                {
+                    AddingExtendedAxes[j].CoordinateNumber = $"{i}";
+                }
             }
-            get
-            {   
-                return _Coordinates;
-            }
-        }
-
-
-        private RelayCommand _DeleteGroupBlockCommand;
-
-        public RelayCommand DeleteGroupBlockCommand
-        {
-            get
+            if (coordinate.Coordinate.CoordinateName == "J")
             {
-                return _DeleteGroupBlockCommand ??
-                    (_DeleteGroupBlockCommand = new RelayCommand(obj =>
-                    {
-                        applicationViewModel.DeleteGroupBlockCommand.Execute(this);
-                    }));
+                int firstAxeNumber = AddingMainAxes[0].Coordinate.Number;
+                AddingMainAxes.Remove(coordinate);
+                if (AddingMainAxes.Count == 0)
+                {
+                    return;
+                }
+                
+                for (int i = selectedNumber, j = selectedNumber - firstAxeNumber; j < AddingMainAxes.Count; i++, j++)
+                {
+                    AddingMainAxes[j].CoordinateNumber = $"{i}";
+                }
             }
-        }
+        });
 
-        private RelayCommand _AddCoordinateBlockCommand;
-        public RelayCommand AddCoordinateBlockCommand
-        {
-            get
+        public void SaveCoordinates()
+        {      
+            foreach (AxeViewModel coord in AddingMainAxes)
             {
-                return _AddCoordinateBlockCommand ?? (
-                    _AddCoordinateBlockCommand = new RelayCommand(obj =>
-                    {
-                        Coordinate coordinate = new Coordinate($"J{Coordinates.Count + 1}=");
-                        Coordinates.Add(new CoordinateViewModel(coordinate,this));
-                    }));
+                Group.MainAxes.Add(coord.Coordinate);
             }
-        }
-
-
-        private RelayCommand _DeleteCoordinateBlockCommand;
-
-        public RelayCommand DeleteCoordinateBlockCommand
-        {
-            get
+            foreach (AxeViewModel coord in AddingExtendedAxes)
             {
-                return _DeleteCoordinateBlockCommand ??
-                    (_DeleteCoordinateBlockCommand = new RelayCommand(obj =>
-                    {
-
-                        CoordinateViewModel coordinate = obj as CoordinateViewModel;
-                        int number = int.Parse(coordinate.CoordinateName[1..coordinate.CoordinateName.IndexOf('=')]);
-                        Coordinates.Remove(coordinate);
-
-                        for(int i = number - 1; i < Coordinates.Count; i++)
-                        {
-                            Coordinates[i].CoordinateName = $"J{i+1}=";
-                        }
-                    }));
-            }
+                Group.ExtendedAxes.Add(coord.Coordinate);
+            }     
         }
-
-        private RelayCommand _SaveCoordinateBlockCommand;
-
-        public RelayCommand SaveCoordinateBlockCommand
-        {
-            get
-            {
-                return _SaveCoordinateBlockCommand ??
-                    (_SaveCoordinateBlockCommand = new RelayCommand(obj =>
-                    {
-                        List<Coordinate> coordinates = new List<Coordinate>();
-                        foreach (CoordinateViewModel coord in Coordinates)
-                        {
-                            coordinates.Add(coord.Coordinate);
-                        }
-
-                        robotGroup.Coordinates = coordinates;
-                    }));
-            }
-        }
-
-
-
-
-
-
-
-
     }
 }
